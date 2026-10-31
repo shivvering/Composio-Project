@@ -1,0 +1,89 @@
+{
+  "appName": "GitHub",
+  "website": "https://github.com",
+  "lastChecked": "2026-10-31",
+  "difficulty": {
+    "level": "easy",
+    "reason": "Registering a GitHub OAuth App or GitHub App requires no upfront manual approval or app store review, allowing immediate testing and deployment."
+  },
+  "timeEstimate": {
+    "setupTime": "5-10 minutes",
+    "approvalWait": "None (Instant)",
+    "notes": "GitHub OAuth apps are immediately active upon creation. GitHub Apps also require no waiting period unless submitted to the GitHub Marketplace."
+  },
+  "requirements": [
+    "A verified GitHub account with Two-Factor Authentication (2FA) enabled",
+    "Basic application details (Application name, Homepage URL, Authorization callback URL)"
+  ],
+  "steps": [
+    {
+      "stepNumber": 1,
+      "title": "Navigate to Developer Settings",
+      "description": "Log into GitHub, go to your profile Settings, scroll down to 'Developer settings', and select either 'OAuth Apps' or 'GitHub Apps'.",
+      "actionUrl": "https://github.com/settings/developers"
+    },
+    {
+      "stepNumber": 2,
+      "title": "Register a New Application",
+      "description": "Click 'New OAuth App' (or 'New GitHub App' if fine-grained permissions/webhooks are needed). Fill out the Application name, Homepage URL, and Authorization callback URL.",
+      "actionUrl": "https://github.com/settings/applications/new"
+    },
+    {
+      "stepNumber": 3,
+      "title": "Generate Client Secrets",
+      "description": "After registering, generate a Client Secret. Store the Client ID and Client Secret securely in your environment variables."
+    }
+  ],
+  "blockers": [
+    {
+      "problem": "Incorrect Callback URL configuration causing authorization failures.",
+      "solution": "Ensure the callback URL matches the exact protocol, domain, port, and path configured in your application routing."
+    },
+    {
+      "problem": "GitHub's strict rate limiting on unauthenticated or standard OAuth requests.",
+      "solution": "Ensure your AI agent properly handles HTTP 403 rate limit headers and uses authenticated requests tied to user tokens."
+    }
+  ],
+  "agentVsDeveloper": {
+    "agentCanDo": [
+      "Handle the OAuth authorization code exchange (code for access token)",
+      "Refresh tokens or manage token storage securely",
+      "Programmatically execute GitHub API calls once authenticated"
+    ],
+    "developerMustDo": [
+      "Log in to the GitHub developer portal using personal 2FA",
+      "Create and register the OAuth App or GitHub App credentials",
+      "Configure redirect URIs and scopes in the developer console"
+    ]
+  },
+  "managedOption": {
+    "managedSufficientWhen": "Building standard multi-tenant AI agents where users connect their personal or organization GitHub accounts via a unified auth provider (e.g., Composio, LangChain integrations, Merge).",
+    "customRequiredWhen": "Building a custom enterprise-grade branded product where you require direct control over GitHub App ownership, proprietary webhook delivery, or custom GitHub Marketplace distribution."
+  },
+  "sources": [
+    {
+      "title": "Creating an OAuth App - GitHub Docs",
+      "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+    },
+    {
+      "title": "Authorizing OAuth Apps - GitHub Docs",
+      "url": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps"
+    }
+  ],
+  "claims": [
+    {
+      "claim": "GitHub OAuth apps are created instantly with no app store review or approval wait time required.",
+      "confidence": "from official docs",
+      "sourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+    },
+    {
+      "claim": "Developers can register OAuth apps under either personal settings or organization settings.",
+      "confidence": "from official docs",
+      "sourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+    }
+  ],
+  "openQuestions": [
+    "Are there specific automated security flags that can temporarily suspend an unverified GitHub OAuth app if it generates sudden high-volume API requests from an AI agent?"
+  ],
+  "slug": "github"
+}

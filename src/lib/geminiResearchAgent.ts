@@ -2,8 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import { OAuthGuide } from '@/types/guide';
 import { validateOAuthGuide } from '@/lib/validateGuide';
+import { memoryGuides, getGuideBySlug } from '@/lib/guides';
 
 const GUIDES_DIR = path.join(process.cwd(), 'data', 'guides');
+const TMP_GUIDES_DIR = path.join('/tmp', 'guides');
 
 export function createSlug(appName: string): string {
   return appName
@@ -125,21 +127,15 @@ export async function researchAndGenerateGuide(query: string): Promise<{
     throw new Error('A valid app name or website is required.');
   }
 
-  // 1. Check local cache first
+  // 1. Check local cache first (in-memory, bundled, or /tmp)
   const querySlug = createSlug(cleanQuery);
-  const cachePath = path.join(GUIDES_DIR, `${querySlug}.json`);
-
-  if (fs.existsSync(cachePath)) {
-    try {
-      const cachedData = JSON.parse(fs.readFileSync(cachePath, 'utf-8'));
-      return {
-        guide: { ...cachedData, slug: querySlug },
-        cached: true,
-        slug: querySlug,
-      };
-    } catch (e) {
-      console.warn(`Error reading cached guide at ${cachePath}, regenerating...`);
-    }
+  const existingGuide = getGuideBySlug(querySlug);
+  if (existingGuide) {
+    return {
+      guide: existingGuide,
+      cached: true,
+      slug: querySlug,
+    };
   }
 
   // Check if any existing file matches by appName or website
@@ -318,7 +314,9 @@ ${extraFeedback ? `\nPREVIOUS ATTEMPT FAILED WITH THESE ERRORS:\n${extraFeedback
   const finalSlug = createSlug(finalGuide.appName) || querySlug;
   finalGuide.slug = finalSlug;
 
-  // 5. Cache to /data/guides/{slug}.json
+  // 5. Cache in memory and write to disk
+  memoryGuides.set(finalSlug, finalGuide);
+
   try {
     if (!fs.existsSync(GUIDES_DIR)) {
       fs.mkdirSync(GUIDES_DIR, { recursive: true });
@@ -329,7 +327,19 @@ ${extraFeedback ? `\nPREVIOUS ATTEMPT FAILED WITH THESE ERRORS:\n${extraFeedback
       'utf-8'
     );
   } catch (fsErr) {
-    console.error('Failed to cache guide to disk:', fsErr);
+    // If running in a serverless environment with a read-only filesystem (e.g., Vercel), fallback to /tmp
+    try {
+      if (!fs.existsSync(TMP_GUIDES_DIR)) {
+        fs.mkdirSync(TMP_GUIDES_DIR, { recursive: true });
+      }
+      fs.writeFileSync(
+        path.join(TMP_GUIDES_DIR, `${finalSlug}.json`),
+        JSON.stringify(finalGuide, null, 2),
+        'utf-8'
+      );
+    } catch (tmpErr) {
+      console.warn('Could not write to disk or /tmp in serverless environment, retained in memory:', tmpErr);
+    }
   }
 
   return {
