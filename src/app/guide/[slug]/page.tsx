@@ -29,6 +29,9 @@ interface GuidePageProps {
   };
 }
 
+export const dynamicParams = true;
+export const dynamic = 'force-dynamic';
+
 export function generateStaticParams() {
   const slugs = getAllGuideSlugs();
   return slugs.map((slug) => ({ slug }));

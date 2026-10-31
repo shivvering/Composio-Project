@@ -1,23 +1,65 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { OAuthGuide } from '@/types/guide';
 import { DifficultyBadge } from './DifficultyBadge';
-import { Search, ArrowRight, ExternalLink, Clock, Hourglass, Sparkles } from 'lucide-react';
+import {
+  Search,
+  ArrowRight,
+  Clock,
+  Hourglass,
+  Sparkles,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
+} from 'lucide-react';
 
 interface SearchGuideListProps {
   initialGuides: OAuthGuide[];
 }
 
+const PROGRESS_STEPS = [
+  'Searching Google for official developer documentation...',
+  'Analyzing OAuth registration console & credentials...',
+  'Checking verification rules, wait times & review tiers...',
+  'Synthesizing common blockers, fixes & agent boundaries...',
+  'Validating guide schema & finalizing shareable report...',
+];
+
 export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
+  const router = useRouter();
   const [query, setQuery] = useState('');
+  const [guides, setGuides] = useState<OAuthGuide[]>(initialGuides);
+
+  // Live research agent states
+  const [isResearching, setIsResearching] = useState(false);
+  const [researchTarget, setResearchTarget] = useState('');
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Cycle progress messages while researching
+  useEffect(() => {
+    if (!isResearching) {
+      setCurrentStepIndex(0);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setCurrentStepIndex((prev) =>
+        prev < PROGRESS_STEPS.length - 1 ? prev + 1 : prev
+      );
+    }, 4500);
+
+    return () => clearInterval(interval);
+  }, [isResearching]);
 
   const filteredGuides = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return initialGuides;
+    if (!q) return guides;
 
-    return initialGuides.filter((guide) => {
+    return guides.filter((guide) => {
       const matchName = guide.appName.toLowerCase().includes(q);
       const matchSite = guide.website.toLowerCase().includes(q);
       const matchDifficulty = guide.difficulty.level.toLowerCase().includes(q);
@@ -26,19 +68,65 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
       );
       return matchName || matchSite || matchDifficulty || matchRequirements;
     });
-  }, [query, initialGuides]);
+  }, [query, guides]);
 
-  const isCustomQuery =
-    query.trim().length > 0 &&
-    !filteredGuides.some(
-      (g) => g.appName.toLowerCase() === query.trim().toLowerCase()
-    );
+  const exactMatchExists = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return guides.some((g) => g.appName.toLowerCase() === q);
+  }, [query, guides]);
+
+  const handleStartResearch = async (targetApp: string) => {
+    const appToResearch = targetApp.trim();
+    if (!appToResearch || isResearching) return;
+
+    setIsResearching(true);
+    setResearchTarget(appToResearch);
+    setErrorMessage(null);
+    setCurrentStepIndex(0);
+
+    try {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: appToResearch }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'This is busy, please try again in a minute.');
+      }
+
+      // Add to local state if new
+      if (data.guide && !guides.some((g) => g.appName === data.guide.appName)) {
+        setGuides((prev) => [data.guide, ...prev]);
+      }
+
+      // Route directly to the shareable guide page
+      if (data.url) {
+        router.push(data.url);
+      }
+    } catch (err: any) {
+      console.error('Research error:', err);
+      setErrorMessage(err.message || 'This is busy, please try again in a minute.');
+    } finally {
+      setIsResearching(false);
+    }
+  };
 
   return (
     <div>
-      {/* Search Bar Container */}
-      <div className="search-container" style={{ margin: '2rem 0' }}>
-        <div
+      {/* Search Input Bar */}
+      <div className="search-container" style={{ margin: '2rem 0 1.25rem 0' }}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (filteredGuides.length === 0 && query.trim()) {
+              handleStartResearch(query);
+            }
+          }}
           style={{
             position: 'relative',
             display: 'flex',
@@ -47,7 +135,6 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
             borderRadius: '10px',
             backgroundColor: 'var(--bg-surface)',
             border: '1px solid var(--border-strong)',
-            transition: 'border-color 0.15s ease',
           }}
         >
           <Search
@@ -62,11 +149,15 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
           <input
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Look up an app or paste its website (e.g. Slack, Notion, Google)..."
+            disabled={isResearching}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setErrorMessage(null);
+            }}
+            placeholder="Look up an app or paste its website (e.g. Slack, GitHub, Linear, Stripe)..."
             style={{
               width: '100%',
-              padding: '1.1rem 1.1rem 1.1rem 3.25rem',
+              padding: '1.1rem 7.5rem 1.1rem 3.25rem',
               fontSize: '1.05rem',
               border: 'none',
               outline: 'none',
@@ -75,26 +166,161 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
               color: 'var(--text-primary)',
             }}
           />
-          {query && (
-            <button
-              onClick={() => setQuery('')}
-              style={{
-                position: 'absolute',
-                right: '1rem',
-                border: 'none',
-                background: 'none',
-                color: 'var(--text-muted)',
-                cursor: 'pointer',
-                fontSize: '0.9rem',
-                fontWeight: 600,
-                padding: '0.25rem 0.5rem',
-              }}
-            >
-              Clear
-            </button>
-          )}
-        </div>
+
+          <div
+            style={{
+              position: 'absolute',
+              right: '0.6rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+            }}
+          >
+            {query && !isResearching && (
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery('');
+                  setErrorMessage(null);
+                }}
+                style={{
+                  border: 'none',
+                  background: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  padding: '0.25rem 0.5rem',
+                }}
+              >
+                Clear
+              </button>
+            )}
+
+            {query.trim().length > 0 && !exactMatchExists && !isResearching && (
+              <button
+                type="button"
+                onClick={() => handleStartResearch(query)}
+                className="btn-action"
+                style={{
+                  backgroundColor: 'var(--primary)',
+                  color: '#ffffff',
+                  borderColor: 'var(--primary)',
+                  fontSize: '0.825rem',
+                  padding: '0.45rem 0.75rem',
+                }}
+              >
+                <Sparkles size={13} />
+                <span>Research</span>
+              </button>
+            )}
+          </div>
+        </form>
       </div>
+
+      {/* Live Research Progress Overlay / Box */}
+      {isResearching && (
+        <div
+          style={{
+            margin: '1.5rem 0',
+            padding: '1.75rem',
+            backgroundColor: '#f5f3ff',
+            borderRadius: '10px',
+            border: '2px solid #8b5cf6',
+            boxShadow: 'var(--shadow-md)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+            <Loader2 size={24} color="#7c3aed" style={{ animation: 'spin 1.2s linear infinite' }} />
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#5b21b6' }}>
+                AI Research Agent Active: &ldquo;{researchTarget}&rdquo;
+              </div>
+              <div style={{ fontSize: '0.875rem', color: '#6d28d9' }}>
+                Grounding with Google Search across official documentation
+              </div>
+            </div>
+          </div>
+
+          {/* Stepper Progress Visualizer */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '1.25rem' }}>
+            {PROGRESS_STEPS.map((step, idx) => {
+              const isDone = idx < currentStepIndex;
+              const isCurrent = idx === currentStepIndex;
+
+              return (
+                <div
+                  key={idx}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.6rem',
+                    fontSize: '0.9rem',
+                    color: isCurrent ? '#5b21b6' : isDone ? '#15803d' : '#9ca3af',
+                    fontWeight: isCurrent ? 600 : 500,
+                  }}
+                >
+                  {isDone ? (
+                    <CheckCircle2 size={16} color="#16a34a" />
+                  ) : isCurrent ? (
+                    <Loader2 size={16} color="#7c3aed" style={{ animation: 'spin 1.2s linear infinite' }} />
+                  ) : (
+                    <div
+                      style={{
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '50%',
+                        border: '1.5px solid #d1d5db',
+                      }}
+                    />
+                  )}
+                  <span>{step}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Error Message Alert */}
+      {errorMessage && (
+        <div
+          style={{
+            margin: '1.25rem 0',
+            padding: '1rem 1.25rem',
+            backgroundColor: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '0.75rem',
+          }}
+        >
+          <AlertCircle size={18} color="#dc2626" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 600, color: '#991b1b', fontSize: '0.925rem' }}>
+              {errorMessage}
+            </div>
+            {query && (
+              <button
+                onClick={() => handleStartResearch(query)}
+                style={{
+                  marginTop: '0.5rem',
+                  fontSize: '0.825rem',
+                  fontWeight: 600,
+                  color: '#dc2626',
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                }}
+              >
+                Retry Research
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Guide Cards Grid */}
       <div
@@ -217,8 +443,9 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
         })}
 
         {/* Live Research Suggestion Card if search yields unmatched app */}
-        {isCustomQuery && (
+        {query.trim().length > 0 && !exactMatchExists && !isResearching && (
           <div
+            onClick={() => handleStartResearch(query)}
             style={{
               padding: '1.5rem',
               backgroundColor: '#faf5ff',
@@ -227,6 +454,16 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#f3e8ff';
+              e.currentTarget.style.borderColor = '#9333ea';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#faf5ff';
+              e.currentTarget.style.borderColor = '#c084fc';
             }}
           >
             <div>
@@ -246,7 +483,7 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
                 }}
               >
                 <Sparkles size={13} />
-                Live Research
+                Live Agent Research
               </div>
 
               <h3
@@ -267,29 +504,29 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
                   marginBottom: '1rem',
                 }}
               >
-                This app isn&apos;t in the catalog yet. The live agent engine can scrape the
-                developer docs, analyze approval requirements, and generate an OAuth guide on the fly.
+                This app isn&apos;t in the catalog yet. Click here to trigger the Gemini live research
+                agent to scrape developer docs and generate a verified guide.
               </p>
             </div>
 
             <div
               style={{
-                fontSize: '0.825rem',
-                fontWeight: 600,
+                fontSize: '0.85rem',
+                fontWeight: 700,
                 color: '#7e22ce',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.4rem',
               }}
             >
-              <span>Live Agent Research Ready</span>
-              <Sparkles size={14} />
+              <span>Click to Start Live Research</span>
+              <Sparkles size={15} />
             </div>
           </div>
         )}
       </div>
 
-      {filteredGuides.length === 0 && !isCustomQuery && (
+      {filteredGuides.length === 0 && query.trim().length === 0 && (
         <div
           style={{
             textAlign: 'center',
@@ -297,7 +534,7 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
             color: 'var(--text-muted)',
           }}
         >
-          No guides found matching your query.
+          No guides available yet.
         </div>
       )}
     </div>

@@ -3,6 +3,8 @@ import { getAllGuides } from '@/lib/guides';
 import { SearchGuideList } from '@/components/SearchGuideList';
 import { ShieldAlert, Zap, Clock, Compass } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default function HomePage() {
   const guides = getAllGuides();
 
