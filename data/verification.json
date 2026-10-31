@@ -1,0 +1,65 @@
+[
+  {
+    "guide": "Slack",
+    "guideSlug": "slack",
+    "claim": "Apps do not need Slack review or approval to be installed on development or private workspaces.",
+    "source": "https://api.slack.com/quickstart",
+    "sourceTitle": "Slack API: Quickstart Guide",
+    "status": "verified correct",
+    "notes": "Tested in development workspace. Internal installations take effect immediately upon manifest upload."
+  },
+  {
+    "guide": "Google",
+    "guideSlug": "google",
+    "claim": "Apps requesting restricted Google scopes (such as Gmail full access) must undergo an annual CASA Tier 2 security assessment.",
+    "source": "https://appdefensealliance.org/casa",
+    "sourceTitle": "App Defense Alliance: CASA",
+    "status": "verified correct",
+    "notes": "Confirmed against current Google Trust & Safety API Services User Data Policy for Gmail and Google Drive scopes."
+  },
+  {
+    "guide": "Google",
+    "guideSlug": "google",
+    "claim": "Unverified apps can test with up to 100 pre-registered test users before verification is submitted.",
+    "source": "https://support.google.com/cloud/answer/9110914",
+    "sourceTitle": "Google Cloud Support: OAuth FAQ",
+    "status": "verified correct",
+    "notes": "Added test accounts in GCP Console OAuth Consent Screen; all successfully authorized without triggering CASA audit."
+  },
+  {
+    "guide": "Slack",
+    "guideSlug": "slack",
+    "claim": "Slack bot tokens can dynamically request incremental scopes at runtime without workspace re-authorization.",
+    "source": "https://api.slack.com/authentication/oauth-v2",
+    "sourceTitle": "Slack OAuth v2 Docs",
+    "status": "corrected",
+    "notes": "Corrected from initial draft: Slack strictly enforces bot scopes granted at install time. Adding new scopes requires prompting the user to re-authorize."
+  },
+  {
+    "guide": "Notion",
+    "guideSlug": "notion",
+    "claim": "Notion does not require manual app review or verification to enable public OAuth.",
+    "source": "https://developers.notion.com/docs/authorization",
+    "sourceTitle": "Notion Authorization Guide",
+    "status": "verified correct",
+    "notes": "Tested public distribution toggle. Providing valid HTTPS redirect URI and privacy policy URLs enabled public OAuth immediately."
+  },
+  {
+    "guide": "Notion",
+    "guideSlug": "notion",
+    "claim": "Notion plans to introduce a mandatory manual review queue for all public integrations.",
+    "source": "https://developers.notion.com",
+    "sourceTitle": "Developer Community Forum",
+    "status": "could not verify",
+    "notes": "Community rumor. No official statement from Notion engineering confirming an approval queue as of Q4 2026."
+  },
+  {
+    "guide": "Linear",
+    "guideSlug": "linear",
+    "claim": "OAuth applications created via workspace settings have instant availability without manual review waits.",
+    "source": "https://linear.app/docs/api/authentication",
+    "sourceTitle": "Linear API Docs",
+    "status": "verified correct",
+    "notes": "Registered test application in workspace settings; client credentials generated and active immediately for testing."
+  }
+]

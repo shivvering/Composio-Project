@@ -20,6 +20,7 @@ import {
   FileCheck,
   CheckCircle,
   ShieldCheck,
+  Sparkles,
 } from 'lucide-react';
 import type { Metadata } from 'next';
 
@@ -88,6 +89,43 @@ export default function GuidePage({ params }: GuidePageProps) {
         <div style={{ display: 'flex', gap: '0.6rem' }}>
           <CopyLinkButton />
           <PrintButton />
+        </div>
+      </div>
+
+      {/* Visible AI-Generated Label with Date & Official Docs Reminder */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '0.75rem',
+          padding: '0.9rem 1.15rem',
+          borderRadius: '10px',
+          backgroundColor: '#f5f3ff',
+          border: '1px solid #ddd6fe',
+          marginBottom: '1.25rem',
+          fontSize: '0.875rem',
+          lineHeight: 1.5,
+          color: '#5b21b6',
+        }}
+      >
+        <Sparkles size={18} color="#7c3aed" style={{ flexShrink: 0, marginTop: '2px' }} />
+        <div>
+          <strong>AI-Generated Guide (Researched on {guide.lastChecked}):</strong>{' '}
+          Generated via AI from available developer documentation. Provider OAuth rules and review
+          policies change frequently — always verify current submission requirements with the{' '}
+          <a
+            href={guide.website}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              color: '#6d28d9',
+              fontWeight: 700,
+              textDecoration: 'underline',
+            }}
+          >
+            official {guide.appName} documentation
+          </a>{' '}
+          before submitting for production approval.
         </div>
       </div>
 
@@ -249,21 +287,21 @@ export default function GuidePage({ params }: GuidePageProps) {
         </div>
       </section>
 
-      {/* Section 3: Division of Labor - Agent vs Developer */}
+      {/* Section 3: What an agent can do vs what you must do */}
       <section className="guide-section">
         <div className="guide-section-header">
           <Layers size={20} color="var(--primary)" />
-          <h2 className="guide-section-title">Agent vs Developer Division of Labor</h2>
+          <h2 className="guide-section-title">What an agent can do vs what you must do</h2>
         </div>
         <p className="guide-section-subtitle">
-          What your autonomous agent can handle vs what strictly requires human manual intervention.
+          A clear division of labor: tasks your autonomous agent can handle vs actions requiring human developer authorization.
         </p>
 
         <div className="agent-split-grid">
           <div className="agent-box agent">
             <div className="agent-box-title" style={{ color: 'var(--primary)' }}>
               <Bot size={18} />
-              <span>What an AI Agent Can Do</span>
+              <span>What an Agent Can Do</span>
             </div>
             <ul className="agent-items-list">
               {guide.agentVsDeveloper.agentCanDo.map((item, i) => (
@@ -278,7 +316,7 @@ export default function GuidePage({ params }: GuidePageProps) {
           <div className="agent-box developer">
             <div className="agent-box-title" style={{ color: 'var(--text-primary)' }}>
               <UserCheck size={18} />
-              <span>What the Developer Must Do</span>
+              <span>What You Must Do Yourself</span>
             </div>
             <ul className="agent-items-list">
               {guide.agentVsDeveloper.developerMustDo.map((item, i) => (
