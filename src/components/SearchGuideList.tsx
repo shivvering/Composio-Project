@@ -104,9 +104,16 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
         setGuides((prev) => [data.guide, ...prev]);
       }
 
-      // Route directly to the shareable guide page
+      // Store in sessionStorage for instant retrieval across Vercel serverless cold starts
+      if (typeof window !== 'undefined' && data.guide && data.slug) {
+        try {
+          sessionStorage.setItem('guide_' + data.slug, JSON.stringify(data.guide));
+        } catch (e) {}
+      }
+
+      // Route directly to the shareable guide page with a full navigation
       if (data.url) {
-        router.push(data.url);
+        window.location.href = data.url;
       }
     } catch (err: any) {
       console.error('Research error:', err);

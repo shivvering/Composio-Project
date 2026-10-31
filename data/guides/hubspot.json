@@ -1,0 +1,94 @@
+{
+  "appName": "HubSpot",
+  "website": "https://www.hubspot.com",
+  "lastChecked": "2026-10-31",
+  "difficulty": {
+    "level": "medium",
+    "reason": "HubSpot requires creating a developer account, configuring app settings, and managing specific scopes. While private apps or standard public apps are straightforward to set up, publishing to the marketplace requires rigorous security reviews."
+  },
+  "timeEstimate": {
+    "setupTime": "30 minutes to 1 hour",
+    "approvalWait": "1 to 5 business days for Marketplace/Public apps (private apps or developer test accounts often require no review)",
+    "notes": "Developer test accounts allow instant local testing without waiting for app approval."
+  },
+  "requirements": [
+    "HubSpot Developer Account or Developer Test Account",
+    "Valid Redirect URL for OAuth 2.0 flow",
+    "Selection of appropriate OAuth scopes matching the AI agent's required HubSpot interactions",
+    "Privacy policy and terms of service URLs (required for public apps)"
+  ],
+  "steps": [
+    {
+      "stepNumber": 1,
+      "title": "Create a HubSpot Developer Account",
+      "description": "Sign up for a free HubSpot developer account or log into your existing HubSpot portal.",
+      "actionUrl": "https://developers.hubspot.com/"
+    },
+    {
+      "stepNumber": 2,
+      "title": "Create a New App",
+      "description": "Navigate to the Apps section in your developer account and click 'Create app'.",
+      "actionUrl": "https://app.hubspot.com/"
+    },
+    {
+      "stepNumber": 3,
+      "title": "Configure Auth Settings",
+      "description": "Set up your Auth settings by adding your redirect URLs and noting your Client ID and Client Secret.",
+      "actionUrl": "https://app.hubspot.com/"
+    },
+    {
+      "stepNumber": 4,
+      "title": "Select Scopes",
+      "description": "Choose the necessary OAuth 2.0 scopes (e.g., crm.objects.contacts.read, crm.objects.deals.write) required by your AI agent.",
+      "actionUrl": "https://app.hubspot.com/"
+    }
+  ],
+  "blockers": [
+    {
+      "problem": "Incorrect or missing redirect URL leading to redirect_mismatch errors.",
+      "solution": "Ensure the redirect URI registered in the HubSpot app settings matches the URI passed in your authorization request character-for-character."
+    },
+    {
+      "problem": "Requesting scopes that require additional permissions or app marketplace review.",
+      "solution": "Use a developer test account to test sensitive or restricted scopes before submitting your app for public review."
+    }
+  ],
+  "agentVsDeveloper": {
+    "agentCanDo": [
+      "Generate PKCE parameters and authorization URL strings",
+      "Exchange authorization codes for access and refresh tokens",
+      "Programmatically invoke HubSpot APIs using valid tokens"
+    ],
+    "developerMustDo": [
+      "Log into the HubSpot developer portal using 2FA",
+      "Create the app entity and configure redirect URIs manually",
+      "Accept terms of service and submit app for marketplace review if public"
+    ]
+  },
+  "managedOption": {
+    "managedSufficientWhen": "Building standard AI agents that need pre-built connectors to read and write CRM data without publishing a standalone public integration to the HubSpot Marketplace.",
+    "customRequiredWhen": "Building a commercial product intended to be listed publicly on the HubSpot App Marketplace under your own brand identity and client credentials."
+  },
+  "sources": [
+    {
+      "title": "HubSpot Developers Documentation",
+      "url": "https://developers.hubspot.com/docs/api/quickstart-oauth"
+    }
+  ],
+  "claims": [
+    {
+      "claim": "HubSpot apps are managed and registered via the HubSpot Developer Portal.",
+      "confidence": "from official docs",
+      "sourceUrl": "https://developers.hubspot.com/docs/api/quickstart-oauth"
+    },
+    {
+      "claim": "Developer test accounts allow instant testing without approval waits.",
+      "confidence": "from official docs",
+      "sourceUrl": "https://developers.hubspot.com/docs/api/private-apps"
+    }
+  ],
+  "openQuestions": [
+    "Are there specific automated security scanning requirements (like CASA) currently mandated for all public HubSpot Marketplace listings?"
+  ],
+  "slug": "hubspot"
+}

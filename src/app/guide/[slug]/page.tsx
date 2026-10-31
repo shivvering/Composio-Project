@@ -1,12 +1,13 @@
 import React from 'react';
-import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getGuideBySlug, getAllGuideSlugs } from '@/lib/guides';
+import { researchAndGenerateGuide } from '@/lib/geminiResearchAgent';
 import { DifficultyBadge } from '@/components/DifficultyBadge';
 import { ConfidenceBadge } from '@/components/ConfidenceBadge';
 import { TimeTimeline } from '@/components/TimeTimeline';
 import { CopyLinkButton } from '@/components/CopyLinkButton';
 import { PrintButton } from '@/components/PrintButton';
+import { GuideNotFound } from '@/components/GuideNotFound';
 import {
   ExternalLink,
   ChevronLeft,
@@ -52,11 +53,22 @@ export function generateMetadata({ params }: GuidePageProps): Metadata {
   };
 }
 
-export default function GuidePage({ params }: GuidePageProps) {
-  const guide = getGuideBySlug(params.slug);
+export default async function GuidePage({ params }: GuidePageProps) {
+  let guide = getGuideBySlug(params.slug);
 
+  // If not found in static/bundled cache, attempt live research on demand
+  if (!guide && process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here') {
+    try {
+      const res = await researchAndGenerateGuide(params.slug);
+      guide = res.guide;
+    } catch (err) {
+      console.warn(`On-demand research failed for "${params.slug}":`, err);
+    }
+  }
+
+  // If still not available, show interactive generation view instead of 404
   if (!guide) {
-    notFound();
+    return <GuideNotFound slug={params.slug} />;
   }
 
   return (
