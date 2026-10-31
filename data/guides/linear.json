@@ -1,0 +1,92 @@
+{
+  "appName": "Linear",
+  "website": "https://linear.app",
+  "lastChecked": "2026-10-31",
+  "difficulty": {
+    "level": "easy",
+    "reason": "Linear's developer platform features a straightforward self-serve OAuth application registration process within user/workspace settings without mandatory upfront trust & safety app store reviews for private or internal integrations."
+  },
+  "timeEstimate": {
+    "setupTime": "15-30 minutes",
+    "approvalWait": "Instant",
+    "notes": "Applications created in the workspace settings are available immediately for authorization."
+  },
+  "requirements": [
+    "Linear workspace account",
+    "Workspace administrator or member privileges to create applications",
+    "Valid HTTPS redirect URI"
+  ],
+  "steps": [
+    {
+      "stepNumber": 1,
+      "title": "Navigate to Workspace Settings",
+      "description": "Log into Linear, click on your workspace name in the top left, and navigate to Settings > API & Integrations or Developer settings.",
+      "actionUrl": "https://linear.app/settings/api"
+    },
+    {
+      "stepNumber": 2,
+      "title": "Create New OAuth Application",
+      "description": "Go to the Applications section and click 'New Application' (or 'Create app').",
+      "actionUrl": "https://linear.app/settings/api/applications"
+    },
+    {
+      "stepNumber": 3,
+      "title": "Configure App Details and Redirect URIs",
+      "description": "Provide the application name, description, logo, and your backend's OAuth callback redirect URI(s)."
+    },
+    {
+      "stepNumber": 4,
+      "title": "Obtain Client ID and Client Secret",
+      "description": "Save the generated Client ID and Client Secret securely to use in your AI agent backend implementation."
+    }
+  ],
+  "blockers": [
+    {
+      "problem": "Redirect URI mismatch errors during authorization code exchange.",
+      "solution": "Ensure that the redirect URI sent in the initial authorization request exactly matches character-for-character the redirect URI registered in the Linear application settings."
+    },
+    {
+      "problem": "Token expiration or missing offline access.",
+      "solution": "Ensure proper handling of refresh tokens if the agent needs long-term background access without repeated user re-authentication."
+    }
+  ],
+  "agentVsDeveloper": {
+    "agentCanDo": [
+      "Construct the authorization URL with required query parameters (client_id, redirect_uri, scope, state)",
+      "Handle the OAuth callback code exchange via backend HTTP POST request",
+      "Automatically store, encrypt, and refresh access tokens"
+    ],
+    "developerMustDo": [
+      "Log into the Linear web interface and complete 2FA",
+      "Navigate to workspace settings to create the OAuth application and copy credentials",
+      "Configure secure environment variables for Client ID and Client Secret"
+    ]
+  },
+  "managedOption": {
+    "managedSufficientWhen": "Building multi-tenant AI agents where users connect their own Linear accounts via an integration platform (like Composio, Pipedream, or LangChain integrations) that handles credential storage and token refreshing.",
+    "customRequiredWhen": "Building a tightly-scoped internal enterprise tool or commercial product requiring a branded Linear OAuth client experience and direct control over token storage policies."
+  },
+  "sources": [
+    {
+      "title": "Linear API Documentation - OAuth",
+      "url": "https://linear.app/docs/api/authentication"
+    }
+  ],
+  "claims": [
+    {
+      "claim": "Linear allows developers to create OAuth applications directly from workspace settings.",
+      "confidence": "from official docs",
+      "sourceUrl": "https://linear.app/docs/api/authentication"
+    },
+    {
+      "claim": "OAuth applications created via workspace settings have instant availability without manual review waits.",
+      "confidence": "unverified",
+      "sourceUrl": "https://linear.app/docs/api/authentication"
+    }
+  ],
+  "openQuestions": [
+    "What are the exact criteria and process if a developer wants to list their Linear OAuth app publicly in the Linear Integrations Directory?",
+    "Are there strict rate limits enforced specifically on custom OAuth client applications?"
+  ],
+  "slug": "linear"
+}

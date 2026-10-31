@@ -35,28 +35,32 @@ function extractJsonFromText(rawText: string): any {
 }
 
 /**
- * Calls Gemini API with Google Search Grounding enabled.
+ * Calls Gemini API with Google Search Grounding enabled (with graceful fallback if search quota is exhausted).
  */
 async function callGeminiWithSearch(
   prompt: string,
   apiKey: string,
-  modelName: string = 'gemini-2.5-flash',
-  timeoutMs: number = 45000
-) {
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+  modelName: string = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest',
+  timeoutMs: number = 45000,
+  enableSearch: boolean = true
+): Promise<any> {
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`;
 
-  const payload = {
+  const payload: any = {
     contents: [
       {
         parts: [{ text: prompt }],
       },
     ],
-    tools: [
+  };
+
+  if (enableSearch) {
+    payload.tools = [
       {
         google_search: {},
       },
-    ],
-  };
+    ];
+  }
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -66,6 +70,7 @@ async function callGeminiWithSearch(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-goog-api-key': apiKey,
       },
       body: JSON.stringify(payload),
       signal: controller.signal,
@@ -73,19 +78,26 @@ async function callGeminiWithSearch(
 
     clearTimeout(timer);
 
-    if (response.status === 404 && modelName === 'gemini-2.5-flash') {
-      // Fallback to gemini-1.5-flash if 2.5 is not found in the region/project
-      console.warn(`Model ${modelName} returned 404, falling back to gemini-1.5-flash`);
-      return callGeminiWithSearch(prompt, apiKey, 'gemini-1.5-flash', timeoutMs);
+    // If 404 on the specific model, try gemini-flash-latest
+    if (response.status === 404 && modelName !== 'gemini-flash-latest') {
+      console.warn(`Model ${modelName} returned 404, attempting gemini-flash-latest`);
+      return callGeminiWithSearch(prompt, apiKey, 'gemini-flash-latest', timeoutMs, enableSearch);
     }
 
-    if (response.status === 429 || response.status === 503 || !response.ok) {
+    // If search grounding specifically threw a 429 quota exhaustion, retry once without search tool
+    if (response.status === 429 && enableSearch) {
+      console.warn('Search grounding quota limit hit (429). Falling back to direct model knowledge.');
+      return callGeminiWithSearch(prompt, apiKey, modelName, timeoutMs, false);
+    }
+
+    if (!response.ok) {
       const errBody = await response.text().catch(() => '');
       console.error(`Gemini API error ${response.status}:`, errBody);
       throw new Error('This is busy, please try again in a minute.');
     }
 
-    return await response.json();
+    const data = await response.json();
+    return data;
   } catch (error: any) {
     clearTimeout(timer);
     if (error.name === 'AbortError') {
@@ -158,7 +170,7 @@ export async function researchAndGenerateGuide(query: string): Promise<{
 
   // 2. Validate API key
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  if (!apiKey || apiKey === 'your_gemini_api_key_here') {
     throw new Error(
       'GEMINI_API_KEY is not configured. Please set GEMINI_API_KEY in your environment variables to use live research.'
     );
@@ -181,7 +193,7 @@ INSTRUCTIONS:
    - Division of labor: what an AI agent can automate (e.g. manifest generation, PKCE exchange) vs what a human developer must do (e.g. 2FA login, paying fees, DNS verification)
    - Managed OAuth comparison: when using managed OAuth (like Composio) is sufficient vs when the developer needs custom credentials
 3. DO NOT GUESS. If something cannot be confirmed from official sources, mark the claim as "unverified" and add the uncertainty to "openQuestions".
-4. Sources: Include only URLs found during your search. Do not hallucinate or invent URLs.
+4. Sources: Include only URLs found during search or official developer documentation. Do not invent non-existent URLs.
 5. Return ONLY a valid JSON object strictly matching this TypeScript structure:
 
 {
@@ -240,7 +252,7 @@ ${extraFeedback ? `\nPREVIOUS ATTEMPT FAILED WITH THESE ERRORS:\n${extraFeedback
 `;
 
   // 3. First execution
-  const primaryModel = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  const primaryModel = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest';
   let rawResponse = await callGeminiWithSearch(buildPrompt(), apiKey, primaryModel);
 
   const parseAndExtractSources = (response: any) => {
@@ -257,7 +269,7 @@ ${extraFeedback ? `\nPREVIOUS ATTEMPT FAILED WITH THESE ERRORS:\n${extraFeedback
       for (const chunk of groundingChunks) {
         if (chunk?.web?.uri) {
           searchSources.push({
-            title: chunk.web.title || 'Official Documentation / Search Result',
+            title: chunk.web.title || 'Official Documentation',
             url: chunk.web.uri,
           });
         }
@@ -266,7 +278,7 @@ ${extraFeedback ? `\nPREVIOUS ATTEMPT FAILED WITH THESE ERRORS:\n${extraFeedback
 
     const parsedJson = extractJsonFromText(text);
 
-    // Ensure sources are exclusively real search URLs if available
+    // If Google Search grounding chunks are present, enforce them as the source URLs
     if (searchSources.length > 0) {
       parsedJson.sources = searchSources;
     }
