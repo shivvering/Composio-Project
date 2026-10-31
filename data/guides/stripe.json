@@ -2,105 +2,108 @@
   "appName": "Stripe",
   "website": "https://stripe.com",
   "lastChecked": "2026-10-31",
+  "manuallyChecked": false,
   "difficulty": {
     "level": "medium",
-    "reason": "Setting up Stripe Connect OAuth requires navigating the Stripe Dashboard, configuring branding, redirect URIs, and handling Stripe's specific OAuth token exchange flows, though the developer setup itself is relatively fast once authenticated."
+    "reason": "Stripe Connect OAuth requires setting up a Stripe platform account, enabling Connect in test mode, and completing standard business verification before moving to live charges.",
+    "confidence": "From official docs",
+    "sourceUrl": "https://docs.stripe.com/connect/oauth"
   },
   "timeEstimate": {
-    "setupTime": "30 minutes to 1 hour",
-    "approvalWait": "Instant to minimal (test mode is immediate; live mode verification depends on business validation)",
-    "notes": "Test mode OAuth applications can be used immediately. Live mode activation requires business verification with Stripe, which can take anywhere from a few hours to a few days."
+    "setupTime": "30-60 minutes",
+    "setupTimeConfidence": "Community reported",
+    "approvalWait": "Instant in Test Mode; 1-3 business days for Live Mode merchant verification",
+    "approvalWaitConfidence": "From official docs",
+    "approvalWaitSourceUrl": "https://docs.stripe.com/connect/oauth",
+    "notes": "Test mode OAuth credentials are available immediately without business verification."
   },
   "requirements": [
-    "A verified Stripe account",
-    "Configured redirect URIs in the Stripe Dashboard",
-    "Client ID (from Stripe Connect settings)",
-    "Secret API Key (Test or Live)",
-    "HTTPS-enabled redirect endpoints (required for production/live mode)"
+    {
+      "text": "Stripe account with platform privileges",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.stripe.com/connect/oauth"
+    },
+    {
+      "text": "Valid HTTPS Redirect URI configured in Stripe Connect settings",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.stripe.com/connect/oauth"
+    },
+    {
+      "text": "Published Terms of Service and Privacy Policy URLs",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.stripe.com/connect/oauth"
+    }
   ],
   "steps": [
     {
       "stepNumber": 1,
-      "title": "Create a Stripe Account",
-      "description": "Sign up for a Stripe account and access the Stripe Dashboard.",
-      "actionUrl": "https://dashboard.stripe.com/register"
+      "title": "Enable Connect in the Stripe Dashboard",
+      "description": "Log into the Stripe Dashboard, navigate to Settings > Connect settings, and enable OAuth onboarding for connected accounts.",
+      "actionUrl": "https://dashboard.stripe.com/settings/connect",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.stripe.com/connect/oauth"
     },
     {
       "stepNumber": 2,
-      "title": "Configure Stripe Connect Settings",
-      "description": "Navigate to the Connect settings page in your Stripe Dashboard to enable Connect and configure your platform settings.",
-      "actionUrl": "https://dashboard.stripe.com/settings/connect"
+      "title": "Configure Redirect URIs and Branding",
+      "description": "Add your development and production HTTPS callback URLs and upload your company logo.",
+      "actionUrl": "https://dashboard.stripe.com/settings/connect",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.stripe.com/connect/oauth"
     },
     {
       "stepNumber": 3,
-      "title": "Configure Redirect URIs and Branding",
-      "description": "Set up your application's redirect URIs (Callback URLs), business name, icon, and branding that users will see during the OAuth consent flow.",
-      "actionUrl": "https://dashboard.stripe.com/settings/connect/oauth"
-    },
-    {
-      "stepNumber": 4,
-      "title": "Obtain Client ID and API Keys",
-      "description": "Retrieve your unique `client_id` (e.g., `ca_...`) for initiating OAuth authorization requests and your Secret Key for token exchange.",
-      "actionUrl": "https://dashboard.stripe.com/settings/apps"
-    },
-    {
-      "stepNumber": 5,
-      "title": "Implement the OAuth Flow",
-      "description": "Redirect users to Stripe's authorize endpoint (`https://connect.stripe.com/oauth/authorize`) with your `client_id`, `response_type=code`, and optional scope, then exchange the returned authorization code via a POST request to `https://connect.stripe.com/oauth/token`."
+      "title": "Obtain Connect Client ID and Secret API Keys",
+      "description": "Retrieve the Connect Client ID (ca_...) and your secret API keys (sk_test_... / sk_live_...) to configure in your AI agent environment variables.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.stripe.com/connect/oauth"
     }
   ],
   "blockers": [
     {
-      "problem": "Using HTTP instead of HTTPS for redirect URIs in production.",
-      "solution": "Stripe enforces HTTPS for all live mode redirect URIs. Ensure your callback endpoints possess valid SSL certificates."
+      "problem": "Using Live mode credentials before completing identity verification.",
+      "solution": "Use test mode credentials (ca_... with sk_test_...) during development to bypass merchant identity verification.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.stripe.com/connect/oauth"
     },
     {
-      "problem": "Confusing standard Stripe API keys with Stripe Connect OAuth Client IDs.",
-      "solution": "Ensure you use the Connect `client_id` (starting with `ca_`) for generating the authorization URL, rather than your standard API secret key."
+      "problem": "CSRF token mismatch during OAuth callback.",
+      "solution": "Always pass and validate a cryptographic state parameter in the authorization redirect URL.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.stripe.com/connect/oauth"
     }
   ],
   "agentVsDeveloper": {
     "agentCanDo": [
-      "Generate OAuth authorization URLs with correct query parameters",
-      "Handle the authorization code callback parsing",
-      "Execute the backend POST request to exchange authorization codes for access tokens",
-      "Refresh tokens and manage token storage state"
+      "Construct Stripe Connect authorization URLs with client_id, scope, and state parameters",
+      "Exchange authorization codes via https://connect.stripe.com/oauth/token",
+      "Execute automated Stripe API calls using connected account headers (Stripe-Account)"
     ],
     "developerMustDo": [
-      "Log into the Stripe Dashboard with 2FA",
-      "Set up and verify business details for Stripe account activation",
-      "Configure allowed redirect URIs and platform branding in the Stripe Dashboard",
-      "Provision secure backend infrastructure to store client secrets"
+      "Log into Stripe Dashboard with 2FA",
+      "Activate Stripe Connect platform settings",
+      "Complete legal business identity verification for live charges"
     ]
   },
   "managedOption": {
-    "managedSufficientWhen": "Building a quick prototype, internal AI agent tool, or generic integration where users connect their own Stripe accounts via a unified auth provider (like Composio or LangChain integrations) without custom branding.",
-    "customRequiredWhen": "Building a dedicated SaaS product or multi-tenant agent platform that requires white-labeled Stripe Connect onboarding, custom platform branding, and direct control over Connected Accounts."
+    "managedSufficientWhen": "Using a managed provider like Composio when connecting an AI agent to read invoices, subscriptions, or customer data without managing platform liabilities. Note: This tool was built for a Composio assignment, and Composio sells managed OAuth.",
+    "customRequiredWhen": "Building a custom marketplace or platform taking application fees on financial transactions directly via custom Stripe Connect."
   },
   "sources": [
     {
       "title": "Stripe Connect OAuth Documentation",
       "url": "https://docs.stripe.com/connect/oauth"
-    },
-    {
-      "title": "Stripe Dashboard - Connect Settings",
-      "url": "https://dashboard.stripe.com/settings/connect"
     }
   ],
   "claims": [
     {
-      "claim": "Stripe Connect uses standard OAuth 2.0 authorization code grant flow with authorize and token endpoints.",
-      "confidence": "from official docs",
-      "sourceUrl": "https://docs.stripe.com/connect/oauth"
-    },
-    {
-      "claim": "Test mode OAuth apps can be configured and tested instantly without waiting for business verification.",
-      "confidence": "from official docs",
+      "claim": "Stripe Connect supports OAuth 2.0 onboarding for connected accounts in both test and live environments.",
+      "confidence": "From official docs",
       "sourceUrl": "https://docs.stripe.com/connect/oauth"
     }
   ],
   "openQuestions": [
-    "Are there any specific third-party security assessments (like CASA) mandated by Stripe for public Connect platforms, or is standard Stripe platform review sufficient?"
+    "Are there specific third-party security audits (like CASA) mandated by Stripe for public Connect platforms?"
   ],
   "slug": "stripe"
 }

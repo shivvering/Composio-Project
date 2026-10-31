@@ -2,77 +2,126 @@
   "appName": "Google (Sensitive & Restricted Scopes)",
   "website": "https://console.cloud.google.com",
   "lastChecked": "2026-10-31",
+  "manuallyChecked": true,
+  "lastVerified": "2026-10-31",
   "difficulty": {
     "level": "hard",
-    "reason": "Requires Google Trust & Safety verification, YouTube demo video, domain verification, and CASA Tier 2 security assessment."
+    "reason": "Requires Google Trust & Safety verification, YouTube demo video, domain verification, and CASA Tier 2 security assessment.",
+    "confidence": "From official docs",
+    "sourceUrl": "https://support.google.com/cloud/answer/9110914"
   },
   "timeEstimate": {
     "setupTime": "2 - 4 hours",
+    "setupTimeConfidence": "Community reported",
     "approvalWait": "2 - 6 weeks",
+    "approvalWaitConfidence": "From official docs",
+    "approvalWaitSourceUrl": "https://support.google.com/cloud/answer/9110914",
     "notes": "Unverified apps can test with up to 100 manually specified test users, but public launch requires Cloud Verification and external security audits."
   },
   "requirements": [
-    "Google Cloud Platform (GCP) organization or project with billing enabled",
-    "Verified domain ownership in Google Search Console",
-    "Public Privacy Policy hosted on the verified domain detailing user data retention and deletion policies",
-    "Unlisted YouTube demonstration video showing the OAuth consent screen with client ID visible in the URL bar",
-    "Annual CASA (Cloud Application Security Assessment) Tier 2 audit for restricted scopes (e.g. Gmail full access)",
-    "Payment of third-party security lab audit fees ($500 - $3,000+ depending on scope tier)"
+    {
+      "text": "Google Cloud Platform (GCP) organization or project with billing enabled",
+      "confidence": "From official docs",
+      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+    },
+    {
+      "text": "Verified domain ownership in Google Search Console",
+      "confidence": "From official docs",
+      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+    },
+    {
+      "text": "Public Privacy Policy hosted on the verified domain detailing user data retention and deletion policies",
+      "confidence": "From official docs",
+      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+    },
+    {
+      "text": "Unlisted YouTube demonstration video showing the OAuth consent screen with client ID visible in the URL bar",
+      "confidence": "From official docs",
+      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+    },
+    {
+      "text": "Annual CASA (Cloud Application Security Assessment) Tier 2 audit for restricted scopes (e.g. Gmail full access)",
+      "confidence": "From official docs",
+      "sourceUrl": "https://appdefensealliance.org/casa"
+    },
+    {
+      "text": "Payment of third-party security lab audit fees ($500 - $3,000+ depending on scope tier)",
+      "confidence": "Community reported"
+    }
   ],
   "steps": [
     {
       "stepNumber": 1,
       "title": "Create a GCP Project & Enable APIs",
       "description": "Go to Google Cloud Console, create a new project, and enable the target APIs (e.g., Gmail API, Google Drive API, Google Calendar API) in the API Library.",
-      "actionUrl": "https://console.cloud.google.com/apis/dashboard"
+      "actionUrl": "https://console.cloud.google.com/apis/dashboard",
+      "confidence": "From official docs",
+      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
     },
     {
       "stepNumber": 2,
       "title": "Configure OAuth Consent Screen",
       "description": "Select User Type 'External'. Enter App Name, Support Email, Developer Email, and Authorized Domains (which must match your Google Search Console domain). Add requested sensitive or restricted scopes.",
-      "actionUrl": "https://console.cloud.google.com/apis/credentials/consent"
+      "actionUrl": "https://console.cloud.google.com/apis/credentials/consent",
+      "confidence": "From official docs",
+      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
     },
     {
       "stepNumber": 3,
       "title": "Create OAuth 2.0 Web Client Credentials",
       "description": "Under 'Credentials', click 'Create Credentials' > 'OAuth client ID'. Select 'Web application' and specify your Authorized Redirect URIs.",
-      "actionUrl": "https://console.cloud.google.com/apis/credentials"
+      "actionUrl": "https://console.cloud.google.com/apis/credentials",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/web-server"
     },
     {
       "stepNumber": 4,
       "title": "Test with Internal / Test Users",
       "description": "Before public verification, add up to 100 Google user email addresses under 'Test users' in the Consent Screen settings. These users can log in despite the unverified state.",
-      "actionUrl": "https://console.cloud.google.com/apis/credentials/consent"
+      "actionUrl": "https://console.cloud.google.com/apis/credentials/consent",
+      "confidence": "From official docs",
+      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
     },
     {
       "stepNumber": 5,
       "title": "Prepare Verification Materials & Demo Video",
       "description": "Record an unlisted YouTube video showing: 1) the browser address bar with client ID, 2) the consent flow, and 3) how your agent handles user data. Verify domain ownership in Google Search Console.",
-      "actionUrl": "https://search.google.com/search-console"
+      "actionUrl": "https://search.google.com/search-console",
+      "confidence": "From official docs",
+      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
     },
     {
       "stepNumber": 6,
       "title": "Submit for Verification & Complete CASA Review",
       "description": "Click 'Submit for Verification' in the GCP Console. Coordinate with Google Trust & Safety and complete the CASA security assessment with an authorized lab.",
-      "actionUrl": "https://appdefensealliance.org/casa"
+      "actionUrl": "https://appdefensealliance.org/casa",
+      "confidence": "From official docs",
+      "sourceUrl": "https://appdefensealliance.org/casa"
     }
   ],
   "blockers": [
     {
       "problem": "Google Unverified App warning screen blocks users during authentication",
-      "solution": "During development, testers can click 'Advanced' > 'Go to [App] (unsafe)'. In production, this screen only disappears after Google Trust & Safety approves your app."
+      "solution": "During development, testers can click 'Advanced' > 'Go to [App] (unsafe)'. In production, this screen only disappears after Google Trust & Safety approves your app.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
     },
     {
       "problem": "Verification application rejected because demo video does not show client ID",
-      "solution": "Re-record the YouTube demo ensuring the browser URL bar is clearly readable and shows the full `client_id` query parameter during the OAuth redirect."
+      "solution": "Re-record the YouTube demo ensuring the browser URL bar is clearly readable and shows the full `client_id` query parameter during the OAuth redirect.",
+      "confidence": "Community reported"
     },
     {
       "problem": "Domain ownership mismatch with GCP project",
-      "solution": "Ensure the domain registered in Google Search Console is verified by the exact same Google account that owns the GCP project."
+      "solution": "Ensure the domain registered in Google Search Console is verified by the exact same Google account that owns the GCP project.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
     },
     {
       "problem": "CASA Tier 2 security assessment costs and lead times",
-      "solution": "Restricted scopes (like Gmail message modification) trigger mandatory third-party lab audits. Evaluate whether less sensitive scopes suffice or use a pre-verified managed provider."
+      "solution": "Restricted scopes (like Gmail message modification) trigger mandatory third-party lab audits. Evaluate whether less sensitive scopes suffice or use a pre-verified managed provider.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://appdefensealliance.org/casa"
     }
   ],
   "agentVsDeveloper": {
@@ -89,7 +138,7 @@
     ]
   },
   "managedOption": {
-    "managedSufficientWhen": "Composio's pre-verified Google OAuth app is the fastest path when building AI assistants or agent tools that need Gmail, Calendar, or Drive access without spending weeks and thousands of dollars on CASA security assessments.",
+    "managedSufficientWhen": "Composio's pre-verified Google OAuth app is the fastest path when building AI assistants or agent tools that need Gmail, Calendar, or Drive access without spending weeks and thousands of dollars on CASA security assessments. This tool was built for a Composio assignment, and Composio sells managed OAuth.",
     "customRequiredWhen": "You must complete custom Google verification if your enterprise customers demand your specific brand name on the Google consent dialog, or if your enterprise security policy prohibits routing tokens through a third-party managed infrastructure."
   },
   "sources": [
@@ -109,19 +158,22 @@
   "claims": [
     {
       "claim": "Apps requesting restricted Google scopes (such as Gmail API) must undergo an annual CASA Tier 2 security assessment.",
-      "confidence": "from official docs",
+      "confidence": "From official docs",
       "sourceUrl": "https://appdefensealliance.org/casa"
     },
     {
       "claim": "Unverified apps can test with up to 100 pre-registered test users before verification is submitted.",
-      "confidence": "verified"
+      "confidence": "From official docs",
+      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
     },
     {
       "claim": "Google requires a public or unlisted YouTube video showing the full URL bar and consent screen before granting sensitive scope approvals.",
-      "confidence": "verified"
+      "confidence": "From official docs",
+      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
     }
   ],
   "openQuestions": [
     "Does Google offer fee subsidies or waivers for early-stage bootstrapped AI agent startups undertaking CASA Tier 2 assessments?"
-  ]
+  ],
+  "slug": "google"
 }

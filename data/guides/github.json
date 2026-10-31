@@ -2,46 +2,70 @@
   "appName": "GitHub",
   "website": "https://github.com",
   "lastChecked": "2026-10-31",
+  "manuallyChecked": false,
   "difficulty": {
     "level": "easy",
-    "reason": "Registering a GitHub OAuth App or GitHub App requires no upfront manual approval or app store review, allowing immediate testing and deployment."
+    "reason": "Registering a GitHub OAuth App or GitHub App requires no upfront manual approval or app store review, allowing immediate testing and deployment.",
+    "confidence": "From official docs",
+    "sourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
   },
   "timeEstimate": {
     "setupTime": "5-10 minutes",
+    "setupTimeConfidence": "Community reported",
     "approvalWait": "None (Instant)",
+    "approvalWaitConfidence": "From official docs",
+    "approvalWaitSourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app",
     "notes": "GitHub OAuth apps are immediately active upon creation. GitHub Apps also require no waiting period unless submitted to the GitHub Marketplace."
   },
   "requirements": [
-    "A verified GitHub account with Two-Factor Authentication (2FA) enabled",
-    "Basic application details (Application name, Homepage URL, Authorization callback URL)"
+    {
+      "text": "A verified GitHub account with Two-Factor Authentication (2FA) enabled",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+    },
+    {
+      "text": "Basic application details (Application name, Homepage URL, Authorization callback URL)",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
+    }
   ],
   "steps": [
     {
       "stepNumber": 1,
       "title": "Navigate to Developer Settings",
       "description": "Log into GitHub, go to your profile Settings, scroll down to 'Developer settings', and select either 'OAuth Apps' or 'GitHub Apps'.",
-      "actionUrl": "https://github.com/settings/developers"
+      "actionUrl": "https://github.com/settings/developers",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
     },
     {
       "stepNumber": 2,
       "title": "Register a New Application",
       "description": "Click 'New OAuth App' (or 'New GitHub App' if fine-grained permissions/webhooks are needed). Fill out the Application name, Homepage URL, and Authorization callback URL.",
-      "actionUrl": "https://github.com/settings/applications/new"
+      "actionUrl": "https://github.com/settings/applications/new",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
     },
     {
       "stepNumber": 3,
       "title": "Generate Client Secrets",
-      "description": "After registering, generate a Client Secret. Store the Client ID and Client Secret securely in your environment variables."
+      "description": "After registering, generate a Client Secret. Store the Client ID and Client Secret securely in your environment variables.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
     }
   ],
   "blockers": [
     {
       "problem": "Incorrect Callback URL configuration causing authorization failures.",
-      "solution": "Ensure the callback URL matches the exact protocol, domain, port, and path configured in your application routing."
+      "solution": "Ensure the callback URL matches the exact protocol, domain, port, and path configured in your application routing.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps"
     },
     {
       "problem": "GitHub's strict rate limiting on unauthenticated or standard OAuth requests.",
-      "solution": "Ensure your AI agent properly handles HTTP 403 rate limit headers and uses authenticated requests tied to user tokens."
+      "solution": "Ensure your AI agent properly handles HTTP 403 rate limit headers and uses authenticated requests tied to user tokens.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps"
     }
   ],
   "agentVsDeveloper": {
@@ -57,7 +81,7 @@
     ]
   },
   "managedOption": {
-    "managedSufficientWhen": "Building standard multi-tenant AI agents where users connect their personal or organization GitHub accounts via a unified auth provider (e.g., Composio, LangChain integrations, Merge).",
+    "managedSufficientWhen": "Building standard multi-tenant AI agents where users connect their personal or organization GitHub accounts via a managed auth provider like Composio. Note: This tool was built for a Composio assignment, and Composio sells managed OAuth.",
     "customRequiredWhen": "Building a custom enterprise-grade branded product where you require direct control over GitHub App ownership, proprietary webhook delivery, or custom GitHub Marketplace distribution."
   },
   "sources": [
@@ -73,12 +97,12 @@
   "claims": [
     {
       "claim": "GitHub OAuth apps are created instantly with no app store review or approval wait time required.",
-      "confidence": "from official docs",
+      "confidence": "From official docs",
       "sourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
     },
     {
       "claim": "Developers can register OAuth apps under either personal settings or organization settings.",
-      "confidence": "from official docs",
+      "confidence": "From official docs",
       "sourceUrl": "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app"
     }
   ],

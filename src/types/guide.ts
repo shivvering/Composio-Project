@@ -1,26 +1,52 @@
 export type DifficultyLevel = 'easy' | 'medium' | 'hard';
 
-export type ClaimConfidence = 'verified' | 'from official docs' | 'unverified';
+export type ConfidenceLabel =
+  | 'From official docs'
+  | 'Community reported'
+  | 'Unverified estimate';
 
-export interface Difficulty {
+export type ClaimConfidence =
+  | 'verified'
+  | 'From official docs'
+  | 'from official docs'
+  | 'Community reported'
+  | 'Unverified estimate'
+  | 'unverified';
+
+export interface ConfidenceMetadata {
+  confidence?: ConfidenceLabel | string;
+  sourceUrl?: string;
+}
+
+export interface Difficulty extends ConfidenceMetadata {
   level: DifficultyLevel;
   reason: string;
 }
 
 export interface TimeEstimate {
-  setupTime: string;
-  approvalWait: string;
+  setupTime: string; // If model has no source for a number, says "Not stated in sources"
+  setupTimeConfidence?: ConfidenceLabel | string;
+  setupTimeSourceUrl?: string;
+  approvalWait: string; // If model has no source for a number, says "Not stated in sources"
+  approvalWaitConfidence?: ConfidenceLabel | string;
+  approvalWaitSourceUrl?: string;
   notes?: string;
 }
 
-export interface SetupStep {
+export interface RequirementItem {
+  text: string;
+  confidence?: ConfidenceLabel | string;
+  sourceUrl?: string;
+}
+
+export interface SetupStep extends ConfidenceMetadata {
   stepNumber: number;
   title: string;
   description: string;
   actionUrl?: string;
 }
 
-export interface Blocker {
+export interface Blocker extends ConfidenceMetadata {
   problem: string;
   solution: string;
 }
@@ -51,9 +77,11 @@ export interface OAuthGuide {
   appName: string;
   website: string;
   lastChecked: string;
+  manuallyChecked?: boolean;
+  lastVerified?: string;
   difficulty: Difficulty;
   timeEstimate: TimeEstimate;
-  requirements: string[];
+  requirements: (string | RequirementItem)[];
   steps: SetupStep[];
   blockers: Blocker[];
   agentVsDeveloper: AgentVsDeveloper;

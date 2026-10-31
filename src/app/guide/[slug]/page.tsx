@@ -122,9 +122,12 @@ export default async function GuidePage({ params }: GuidePageProps) {
       >
         <Sparkles size={18} color="#7c3aed" style={{ flexShrink: 0, marginTop: '2px' }} />
         <div>
-          <strong>AI-Generated Guide (Researched on {guide.lastChecked}):</strong>{' '}
-          Generated via AI from available developer documentation. Provider OAuth rules and review
-          policies change frequently — always verify current submission requirements with the{' '}
+          <strong>
+            {guide.manuallyChecked
+              ? `Manually Verified Guide (Last verified ${guide.lastVerified || guide.lastChecked}):`
+              : `Generated on ${guide.lastChecked}:`}
+          </strong>{' '}
+          Provider OAuth rules and review policies change frequently — always verify current submission requirements with the{' '}
           <a
             href={guide.website}
             target="_blank"
@@ -161,7 +164,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
           }}
         >
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
               <h1
                 style={{
                   fontSize: '2.1rem',
@@ -172,7 +175,16 @@ export default async function GuidePage({ params }: GuidePageProps) {
               >
                 {guide.appName}
               </h1>
-              <DifficultyBadge level={guide.difficulty.level} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <DifficultyBadge level={guide.difficulty.level} />
+                {guide.difficulty.confidence && (
+                  <ConfidenceBadge
+                    confidence={guide.difficulty.confidence}
+                    sourceUrl={guide.difficulty.sourceUrl}
+                    size="sm"
+                  />
+                )}
+              </div>
             </div>
 
             <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
@@ -207,7 +219,11 @@ export default async function GuidePage({ params }: GuidePageProps) {
 
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
                 <Calendar size={14} />
-                <span>Last verified: {guide.lastChecked}</span>
+                <span>
+                  {guide.manuallyChecked
+                    ? `Last verified: ${guide.lastVerified || guide.lastChecked}`
+                    : `Generated on ${guide.lastChecked}`}
+                </span>
               </span>
             </div>
           </div>
@@ -225,16 +241,34 @@ export default async function GuidePage({ params }: GuidePageProps) {
               textTransform: 'uppercase',
               letterSpacing: '0.04em',
               color: 'var(--text-muted)',
+              marginBottom: '0.4rem',
             }}
           >
             Required Before Starting
           </div>
           <div className="reqs-list">
-            {guide.requirements.map((req, i) => (
-              <span key={i} className="req-badge">
-                • {req}
-              </span>
-            ))}
+            {guide.requirements.map((req, i) => {
+              const isObj = typeof req === 'object' && req !== null;
+              const text = isObj ? req.text : req;
+              const conf = isObj ? req.confidence : 'From official docs';
+              const src = isObj ? req.sourceUrl : undefined;
+
+              return (
+                <span
+                  key={i}
+                  className="req-badge"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <span>• {text}</span>
+                  <ConfidenceBadge confidence={conf} sourceUrl={src} size="sm" />
+                </span>
+              );
+            })}
           </div>
         </div>
       </header>
@@ -254,7 +288,27 @@ export default async function GuidePage({ params }: GuidePageProps) {
             <div key={step.stepNumber} className="step-card">
               <div className="step-number">{step.stepNumber}</div>
               <div className="step-content">
-                <h3 className="step-title">{step.title}</h3>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    gap: '0.75rem',
+                    marginBottom: '0.35rem',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <h3 className="step-title" style={{ margin: 0 }}>
+                    {step.title}
+                  </h3>
+                  {step.confidence && (
+                    <ConfidenceBadge
+                      confidence={step.confidence}
+                      sourceUrl={step.sourceUrl}
+                      size="sm"
+                    />
+                  )}
+                </div>
                 <p className="step-desc">{step.description}</p>
                 {step.actionUrl && (
                   <a
@@ -286,9 +340,27 @@ export default async function GuidePage({ params }: GuidePageProps) {
         <div className="blockers-grid">
           {guide.blockers.map((blocker, i) => (
             <div key={i} className="blocker-card">
-              <div className="blocker-problem">
-                <AlertTriangle size={15} style={{ flexShrink: 0 }} />
-                <span>{blocker.problem}</span>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  gap: '0.75rem',
+                  marginBottom: '0.4rem',
+                  flexWrap: 'wrap',
+                }}
+              >
+                <div className="blocker-problem" style={{ marginBottom: 0 }}>
+                  <AlertTriangle size={15} style={{ flexShrink: 0 }} />
+                  <span>{blocker.problem}</span>
+                </div>
+                {blocker.confidence && (
+                  <ConfidenceBadge
+                    confidence={blocker.confidence}
+                    sourceUrl={blocker.sourceUrl}
+                    size="sm"
+                  />
+                )}
               </div>
               <div className="blocker-solution">
                 <strong style={{ color: 'var(--text-primary)' }}>Action Plan: </strong>
@@ -362,6 +434,27 @@ export default async function GuidePage({ params }: GuidePageProps) {
           Evaluate whether using a managed integration platform (like Composio) is sufficient or if you must create your own app.
         </p>
 
+        {/* Note required by prompt (e) */}
+        <div
+          style={{
+            marginBottom: '1.25rem',
+            padding: '0.85rem 1rem',
+            backgroundColor: '#f8fafc',
+            borderRadius: '8px',
+            border: '1px solid var(--border-light)',
+            fontSize: '0.85rem',
+            color: 'var(--text-secondary)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+          }}
+        >
+          <ShieldCheck size={16} color="var(--primary)" style={{ flexShrink: 0 }} />
+          <span>
+            This tool was built for a Composio assignment, and Composio sells managed OAuth.
+          </span>
+        </div>
+
         <div className="managed-grid">
           <div className="managed-card managed">
             <div className="managed-card-title" style={{ color: '#166534' }}>
@@ -392,7 +485,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
           <h2 className="guide-section-title">Key Claims & Verification Status</h2>
         </div>
         <p className="guide-section-subtitle">
-          Every statement in this guide has an explicit confidence rating based on live tests or official documentation.
+          Specific factual statements evaluated against official documentation and live developer tests.
         </p>
 
         <div className="claims-list">

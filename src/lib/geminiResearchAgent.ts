@@ -37,6 +37,42 @@ function extractJsonFromText(rawText: string): any {
 }
 
 /**
+ * Verifies that a URL returns a successful response (HTTP status < 400).
+ * Removes dead links that 404, fail, or time out.
+ */
+async function isUrlSuccessful(urlStr?: string, timeoutMs: number = 3000): Promise<boolean> {
+  if (!urlStr || typeof urlStr !== 'string') return false;
+  try {
+    const parsed = new URL(urlStr);
+    if (!['http:', 'https:'].includes(parsed.protocol)) return false;
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    let res = await fetch(urlStr, {
+      method: 'HEAD',
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; OAuthPathValidator/1.0)' },
+      signal: controller.signal,
+      redirect: 'follow',
+    }).catch(async () => {
+      // Fallback to GET if HEAD method is blocked (405 Method Not Allowed)
+      return await fetch(urlStr, {
+        method: 'GET',
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; OAuthPathValidator/1.0)' },
+        signal: controller.signal,
+        redirect: 'follow',
+      });
+    });
+
+    clearTimeout(timer);
+    // 2xx, 3xx are successful. 403 can happen on bot-protected Cloudflare sites, but 404/5xx is dead.
+    return res.status < 400 || res.status === 403;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
  * Calls Gemini API with Google Search Grounding enabled (with graceful fallback if search quota is exhausted).
  */
 async function callGeminiWithSearch(
@@ -178,46 +214,59 @@ export async function researchAndGenerateGuide(query: string): Promise<{
 You are an expert AI infrastructure researcher researching OAuth 2.0 app registration and approval processes for developers building AI agents.
 Research the OAuth 2.0 app setup and approval requirements for: "${cleanQuery}".
 
-INSTRUCTIONS:
-1. Use official developer documentation as your primary source.
-2. Find:
-   - Where the OAuth app is registered (exact developer portal URL)
-   - Required fields, verification steps, and scopes
-   - Review or verification rules (e.g., app store review, trust & safety verification, CASA security assessments)
-   - Stated or reported approval wait times and active developer setup times
-   - Common blockers and pitfalls developers face (and actionable solutions)
-   - Division of labor: what an AI agent can automate (e.g. manifest generation, PKCE exchange) vs what a human developer must do (e.g. 2FA login, paying fees, DNS verification)
-   - Managed OAuth comparison: when using managed OAuth (like Composio) is sufficient vs when the developer needs custom credentials
-3. DO NOT GUESS. If something cannot be confirmed from official sources, mark the claim as "unverified" and add the uncertainty to "openQuestions".
-4. Sources: Include only URLs found during search or official developer documentation. Do not invent non-existent URLs.
-5. Return ONLY a valid JSON object strictly matching this TypeScript structure:
+CRITICAL REQUIREMENTS:
+1. Primary Source: Use official developer documentation as your primary source.
+2. Confidence Labels: EVERY field (difficulty, active setup time, approval wait time, each requirement, each step, each blocker) MUST carry a confidence label: 'From official docs', 'Community reported', or 'Unverified estimate', and an associated sourceUrl if one exists in the search results.
+3. Rule for Numbers & Time Estimates: If you have no exact citation or source for a number (such as active setup time or approval wait time), you MUST state "Not stated in sources" instead of inventing a range.
+4. Rule for URLs: ONLY use URLs that appeared in the search results. NEVER construct, guess, or synthesize deep links (e.g. do not invent console paths). If you do not have a search result link for a specific step or blocker, omit sourceUrl/actionUrl.
+5. Managed OAuth note: In the managedOption section, evaluate when managed OAuth like Composio is enough vs when custom developer credentials are required. Include the exact statement: "This tool was built for a Composio assignment, and Composio sells managed OAuth." Do not name other products unless an official source directly supports it.
+6. Unknowns: If something cannot be confirmed from search sources, mark the confidence label as "Unverified estimate" and add the question to "openQuestions".
+
+Return ONLY a valid JSON object strictly matching this TypeScript structure:
 
 {
   "appName": string,
   "website": string,
   "lastChecked": "${today}",
+  "manuallyChecked": false,
   "difficulty": {
     "level": "easy" | "medium" | "hard",
-    "reason": string
+    "reason": string,
+    "confidence": "From official docs" | "Community reported" | "Unverified estimate",
+    "sourceUrl": string (optional, only from search results)
   },
   "timeEstimate": {
-    "setupTime": string,
-    "approvalWait": string,
+    "setupTime": string (e.g. "15-30 minutes" or "Not stated in sources"),
+    "setupTimeConfidence": "From official docs" | "Community reported" | "Unverified estimate",
+    "setupTimeSourceUrl": string (optional),
+    "approvalWait": string (e.g. "Instant", "3-5 business days", or "Not stated in sources"),
+    "approvalWaitConfidence": "From official docs" | "Community reported" | "Unverified estimate",
+    "approvalWaitSourceUrl": string (optional),
     "notes": string
   },
-  "requirements": string[],
+  "requirements": [
+    {
+      "text": string,
+      "confidence": "From official docs" | "Community reported" | "Unverified estimate",
+      "sourceUrl": string (optional)
+    }
+  ],
   "steps": [
     {
       "stepNumber": number,
       "title": string,
       "description": string,
-      "actionUrl": string (optional URL to developer console)
+      "confidence": "From official docs" | "Community reported" | "Unverified estimate",
+      "sourceUrl": string (optional),
+      "actionUrl": string (optional, ONLY if found in search results)
     }
   ],
   "blockers": [
     {
       "problem": string,
-      "solution": string
+      "solution": string,
+      "confidence": "From official docs" | "Community reported" | "Unverified estimate",
+      "sourceUrl": string (optional)
     }
   ],
   "agentVsDeveloper": {
@@ -231,13 +280,13 @@ INSTRUCTIONS:
   "sources": [
     {
       "title": string,
-      "url": string
+      "url": string (must be real search result URL)
     }
   ],
   "claims": [
     {
       "claim": string,
-      "confidence": "verified" | "from official docs" | "unverified",
+      "confidence": "From official docs" | "Community reported" | "Unverified estimate",
       "sourceUrl": string (optional)
     }
   ],
@@ -247,7 +296,7 @@ INSTRUCTIONS:
 ${extraFeedback ? `\nPREVIOUS ATTEMPT FAILED WITH THESE ERRORS:\n${extraFeedback}\nPlease fix these errors and return valid JSON only.` : ''}
 `;
 
-  // 3. First execution
+  // 3. Execution
   const primaryModel = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest';
   let rawResponse = await callGeminiWithSearch(buildPrompt(), apiKey, primaryModel);
 
@@ -313,8 +362,73 @@ ${extraFeedback ? `\nPREVIOUS ATTEMPT FAILED WITH THESE ERRORS:\n${extraFeedback
   const finalGuide = validation.guide;
   const finalSlug = createSlug(finalGuide.appName) || querySlug;
   finalGuide.slug = finalSlug;
+  finalGuide.manuallyChecked = false; // Always marked as AI-generated unless manually verified
 
-  // 5. Cache in memory and write to disk
+  // Ensure Composio assignment note is present in managedOption
+  const composioNote = 'This tool was built for a Composio assignment, and Composio sells managed OAuth.';
+  if (!finalGuide.managedOption.managedSufficientWhen.includes(composioNote)) {
+    finalGuide.managedOption.managedSufficientWhen += ` Note: ${composioNote}`;
+  }
+
+  // 5. Check every URL returns a successful response; remove failing links
+  const verifiedSources: Array<{ title: string; url: string }> = [];
+  for (const src of finalGuide.sources) {
+    if (await isUrlSuccessful(src.url)) {
+      verifiedSources.push(src);
+    } else {
+      console.warn(`Removing unreachable source URL: ${src.url}`);
+    }
+  }
+  finalGuide.sources = verifiedSources;
+
+  // Clean URLs in steps
+  for (const step of finalGuide.steps) {
+    if (step.actionUrl) {
+      if (!(await isUrlSuccessful(step.actionUrl))) {
+        delete step.actionUrl;
+      }
+    }
+    if (step.sourceUrl) {
+      if (!(await isUrlSuccessful(step.sourceUrl))) {
+        delete step.sourceUrl;
+      }
+    }
+  }
+
+  // Clean URLs in blockers
+  for (const b of finalGuide.blockers) {
+    if (b.sourceUrl && !(await isUrlSuccessful(b.sourceUrl))) {
+      delete b.sourceUrl;
+    }
+  }
+
+  // Clean URLs in requirements
+  for (const r of finalGuide.requirements) {
+    if (typeof r === 'object' && r.sourceUrl) {
+      if (!(await isUrlSuccessful(r.sourceUrl))) {
+        delete r.sourceUrl;
+      }
+    }
+  }
+
+  // Clean URLs in difficulty and timeEstimate
+  if (finalGuide.difficulty.sourceUrl && !(await isUrlSuccessful(finalGuide.difficulty.sourceUrl))) {
+    delete finalGuide.difficulty.sourceUrl;
+  }
+  if (
+    finalGuide.timeEstimate.setupTimeSourceUrl &&
+    !(await isUrlSuccessful(finalGuide.timeEstimate.setupTimeSourceUrl))
+  ) {
+    delete finalGuide.timeEstimate.setupTimeSourceUrl;
+  }
+  if (
+    finalGuide.timeEstimate.approvalWaitSourceUrl &&
+    !(await isUrlSuccessful(finalGuide.timeEstimate.approvalWaitSourceUrl))
+  ) {
+    delete finalGuide.timeEstimate.approvalWaitSourceUrl;
+  }
+
+  // 6. Cache in memory and write to disk / /tmp
   memoryGuides.set(finalSlug, finalGuide);
 
   try {
@@ -327,7 +441,6 @@ ${extraFeedback ? `\nPREVIOUS ATTEMPT FAILED WITH THESE ERRORS:\n${extraFeedback
       'utf-8'
     );
   } catch (fsErr) {
-    // If running in a serverless environment with a read-only filesystem (e.g., Vercel), fallback to /tmp
     try {
       if (!fs.existsSync(TMP_GUIDES_DIR)) {
         fs.mkdirSync(TMP_GUIDES_DIR, { recursive: true });

@@ -1,9 +1,30 @@
-import { OAuthGuide, DifficultyLevel, ClaimConfidence } from '@/types/guide';
+import {
+  OAuthGuide,
+  DifficultyLevel,
+  ConfidenceLabel,
+  RequirementItem,
+  SetupStep,
+  Blocker,
+} from '@/types/guide';
 
 export interface ValidationResult {
   valid: boolean;
   errors: string[];
   guide?: OAuthGuide;
+}
+
+const VALID_CONFIDENCE_LABELS: ConfidenceLabel[] = [
+  'From official docs',
+  'Community reported',
+  'Unverified estimate',
+];
+
+function normalizeConfidence(conf: any, defaultVal: ConfidenceLabel = 'Unverified estimate'): ConfidenceLabel {
+  if (typeof conf !== 'string') return defaultVal;
+  const lower = conf.toLowerCase().trim();
+  if (lower.includes('official') || lower.includes('docs')) return 'From official docs';
+  if (lower.includes('community')) return 'Community reported';
+  return 'Unverified estimate';
 }
 
 export function validateOAuthGuide(input: any): ValidationResult {
@@ -13,7 +34,6 @@ export function validateOAuthGuide(input: any): ValidationResult {
     return { valid: false, errors: ['Input must be a JSON object.'] };
   }
 
-  // Helper string checks
   const checkString = (val: any, field: string) => {
     if (typeof val !== 'string' || val.trim().length === 0) {
       errors.push(`Field '${field}' must be a non-empty string.`);
@@ -45,7 +65,7 @@ export function validateOAuthGuide(input: any): ValidationResult {
 
   // requirements
   if (!Array.isArray(input.requirements) || input.requirements.length === 0) {
-    errors.push("Field 'requirements' must be a non-empty array of strings.");
+    errors.push("Field 'requirements' must be a non-empty array.");
   }
 
   // steps
@@ -107,18 +127,6 @@ export function validateOAuthGuide(input: any): ValidationResult {
   // claims
   if (!Array.isArray(input.claims) || input.claims.length === 0) {
     errors.push("Field 'claims' must be a non-empty array of claims with confidence labels.");
-  } else {
-    const validConf: ClaimConfidence[] = ['verified', 'from official docs', 'unverified'];
-    input.claims.forEach((c: any, i: number) => {
-      if (!c || typeof c !== 'object') {
-        errors.push(`Claim [${i}] must be an object.`);
-      } else {
-        if (typeof c.claim !== 'string') errors.push(`Claim [${i}].claim must be a string.`);
-        if (!validConf.includes(c.confidence)) {
-          errors.push(`Claim [${i}].confidence must be 'verified', 'from official docs', or 'unverified'.`);
-        }
-      }
-    });
   }
 
   // openQuestions
@@ -130,33 +138,67 @@ export function validateOAuthGuide(input: any): ValidationResult {
     return { valid: false, errors };
   }
 
-  // Normalize step numbers
-  const normalizedSteps = input.steps.map((step: any, index: number) => ({
+  // Normalize requirements with confidence labels
+  const normalizedRequirements: RequirementItem[] = input.requirements.map((req: any) => {
+    if (typeof req === 'string') {
+      return {
+        text: req.trim(),
+        confidence: 'From official docs',
+      };
+    }
+    return {
+      text: String(req.text || '').trim(),
+      confidence: normalizeConfidence(req.confidence, 'From official docs'),
+      ...(req.sourceUrl ? { sourceUrl: String(req.sourceUrl).trim() } : {}),
+    };
+  });
+
+  // Normalize setup steps with confidence labels
+  const normalizedSteps: SetupStep[] = input.steps.map((step: any, index: number) => ({
     stepNumber: typeof step.stepNumber === 'number' ? step.stepNumber : index + 1,
-    title: step.title,
-    description: step.description,
-    ...(step.actionUrl ? { actionUrl: step.actionUrl } : {}),
+    title: String(step.title || '').trim(),
+    description: String(step.description || '').trim(),
+    confidence: normalizeConfidence(step.confidence, 'From official docs'),
+    ...(step.sourceUrl ? { sourceUrl: String(step.sourceUrl).trim() } : {}),
+    ...(step.actionUrl ? { actionUrl: String(step.actionUrl).trim() } : {}),
+  }));
+
+  // Normalize blockers with confidence labels
+  const normalizedBlockers: Blocker[] = input.blockers.map((b: any) => ({
+    problem: String(b.problem || '').trim(),
+    solution: String(b.solution || '').trim(),
+    confidence: normalizeConfidence(b.confidence, 'Community reported'),
+    ...(b.sourceUrl ? { sourceUrl: String(b.sourceUrl).trim() } : {}),
   }));
 
   const guide: OAuthGuide = {
     appName: input.appName.trim(),
     website: input.website.trim(),
     lastChecked: input.lastChecked.trim(),
+    manuallyChecked: Boolean(input.manuallyChecked),
+    ...(input.lastVerified ? { lastVerified: String(input.lastVerified).trim() } : {}),
     difficulty: {
       level: input.difficulty.level,
       reason: input.difficulty.reason.trim(),
+      confidence: normalizeConfidence(input.difficulty.confidence, 'From official docs'),
+      ...(input.difficulty.sourceUrl ? { sourceUrl: String(input.difficulty.sourceUrl).trim() } : {}),
     },
     timeEstimate: {
       setupTime: input.timeEstimate.setupTime.trim(),
+      setupTimeConfidence: normalizeConfidence(input.timeEstimate.setupTimeConfidence, 'Unverified estimate'),
+      ...(input.timeEstimate.setupTimeSourceUrl
+        ? { setupTimeSourceUrl: String(input.timeEstimate.setupTimeSourceUrl).trim() }
+        : {}),
       approvalWait: input.timeEstimate.approvalWait.trim(),
+      approvalWaitConfidence: normalizeConfidence(input.timeEstimate.approvalWaitConfidence, 'From official docs'),
+      ...(input.timeEstimate.approvalWaitSourceUrl
+        ? { approvalWaitSourceUrl: String(input.timeEstimate.approvalWaitSourceUrl).trim() }
+        : {}),
       notes: input.timeEstimate.notes ? input.timeEstimate.notes.trim() : undefined,
     },
-    requirements: input.requirements.map((r: any) => String(r).trim()),
+    requirements: normalizedRequirements,
     steps: normalizedSteps,
-    blockers: input.blockers.map((b: any) => ({
-      problem: String(b.problem).trim(),
-      solution: String(b.solution).trim(),
-    })),
+    blockers: normalizedBlockers,
     agentVsDeveloper: {
       agentCanDo: input.agentVsDeveloper.agentCanDo.map((a: any) => String(a).trim()),
       developerMustDo: input.agentVsDeveloper.developerMustDo.map((d: any) => String(d).trim()),
@@ -171,7 +213,7 @@ export function validateOAuthGuide(input: any): ValidationResult {
     })),
     claims: input.claims.map((c: any) => ({
       claim: String(c.claim).trim(),
-      confidence: c.confidence,
+      confidence: normalizeConfidence(c.confidence, 'From official docs'),
       ...(c.sourceUrl ? { sourceUrl: String(c.sourceUrl).trim() } : {}),
     })),
     openQuestions: input.openQuestions.map((q: any) => String(q).trim()),

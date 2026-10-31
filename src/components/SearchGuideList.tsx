@@ -63,9 +63,10 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
       const matchName = guide.appName.toLowerCase().includes(q);
       const matchSite = guide.website.toLowerCase().includes(q);
       const matchDifficulty = guide.difficulty.level.toLowerCase().includes(q);
-      const matchRequirements = guide.requirements.some((r) =>
-        r.toLowerCase().includes(q)
-      );
+      const matchRequirements = guide.requirements.some((r) => {
+        const text = typeof r === 'string' ? r : r.text;
+        return text.toLowerCase().includes(q);
+      });
       return matchName || matchSite || matchDifficulty || matchRequirements;
     });
   }, [query, guides]);

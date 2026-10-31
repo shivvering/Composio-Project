@@ -2,55 +2,91 @@
   "appName": "Notion",
   "website": "https://developers.notion.com",
   "lastChecked": "2026-10-31",
+  "manuallyChecked": true,
+  "lastVerified": "2026-10-31",
   "difficulty": {
     "level": "easy",
-    "reason": "Internal integrations take minutes; public OAuth requires zero manual Notion review before going live."
+    "reason": "Internal integrations take minutes; public OAuth requires zero manual Notion review before going live.",
+    "confidence": "From official docs",
+    "sourceUrl": "https://developers.notion.com/docs/authorization"
   },
   "timeEstimate": {
     "setupTime": "10 - 15 minutes",
+    "setupTimeConfidence": "From official docs",
+    "setupTimeSourceUrl": "https://developers.notion.com/docs/create-a-notion-integration",
     "approvalWait": "Instant (no mandatory review required)",
+    "approvalWaitConfidence": "From official docs",
+    "approvalWaitSourceUrl": "https://developers.notion.com/docs/authorization",
     "notes": "Notion allows public distribution as soon as company information and valid URLs are provided."
   },
   "requirements": [
-    "Notion user account and workspace",
-    "Public HTTPS redirect URI",
-    "Published Privacy Policy and Terms of Service URLs (for public OAuth)",
-    "Integration icon (PNG/JPEG format, square recommended)"
+    {
+      "text": "Notion user account and workspace",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.notion.com/docs/create-a-notion-integration"
+    },
+    {
+      "text": "Public HTTPS redirect URI",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.notion.com/docs/authorization"
+    },
+    {
+      "text": "Published Privacy Policy and Terms of Service URLs (for public OAuth)",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.notion.com/docs/authorization"
+    },
+    {
+      "text": "Integration icon (PNG/JPEG format, square recommended)",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.notion.com/docs/create-a-notion-integration"
+    }
   ],
   "steps": [
     {
       "stepNumber": 1,
       "title": "Create an Integration in Notion Developers",
       "description": "Go to notion.so/profile/integrations and click 'New integration'. Assign an app name and choose an associated workspace.",
-      "actionUrl": "https://www.notion.so/profile/integrations"
+      "actionUrl": "https://www.notion.so/profile/integrations",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.notion.com/docs/create-a-notion-integration"
     },
     {
       "stepNumber": 2,
       "title": "Select Integration Type & Capabilities",
       "description": "Choose 'Internal integration' for your own workspace, or toggle to 'Public integration' to allow any Notion user to connect. Select capabilities (Read, Update, Insert content).",
-      "actionUrl": "https://www.notion.so/profile/integrations"
+      "actionUrl": "https://www.notion.so/profile/integrations",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.notion.com/docs/create-a-notion-integration"
     },
     {
       "stepNumber": 3,
       "title": "Configure OAuth Redirect URI and Company Info",
       "description": "In the 'Distribution' tab, input your HTTPS redirect URI, your company name, and links to your privacy policy and terms.",
-      "actionUrl": "https://www.notion.so/profile/integrations"
+      "actionUrl": "https://www.notion.so/profile/integrations",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.notion.com/docs/authorization"
     },
     {
       "stepNumber": 4,
       "title": "Retrieve OAuth Credentials",
       "description": "Copy your OAuth Client ID and Client Secret from the 'Secrets' tab. Store them in `.env.local`.",
-      "actionUrl": "https://www.notion.so/profile/integrations"
+      "actionUrl": "https://www.notion.so/profile/integrations",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.notion.com/docs/authorization"
     }
   ],
   "blockers": [
     {
       "problem": "Agent receives 404 or empty results when querying pages or databases",
-      "solution": "Notion uses granular page-level permissions. The user must explicitly grant the integration access to pages using the 'Add connections' menu inside Notion page settings."
+      "solution": "Notion uses granular page-level permissions. The user must explicitly grant the integration access to pages using the 'Add connections' menu inside Notion page settings.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.notion.com/docs/authorization"
     },
     {
       "problem": "Public distribution toggle fails validation",
-      "solution": "Notion verifies that privacy policy and terms URLs are reachable HTTPS links. Ensure both endpoints return HTTP 200."
+      "solution": "Notion verifies that privacy policy and terms URLs are reachable HTTPS links. Ensure both endpoints return HTTP 200.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.notion.com/docs/authorization"
     }
   ],
   "agentVsDeveloper": {
@@ -66,7 +102,7 @@
     ]
   },
   "managedOption": {
-    "managedSufficientWhen": "Composio's managed Notion integration is ideal for 95% of use cases because Notion users always select which pages to share during the consent screen, regardless of whether the app is managed or custom.",
+    "managedSufficientWhen": "Composio's managed Notion integration is ideal for 95% of use cases because Notion users always select which pages to share during the consent screen, regardless of whether the app is managed or custom. This tool was built for a Composio assignment, and Composio sells managed OAuth.",
     "customRequiredWhen": "A custom Notion integration is only required if you want your company's custom logo and brand name shown at the top of the Notion workspace connection selector."
   },
   "sources": [
@@ -82,15 +118,17 @@
   "claims": [
     {
       "claim": "Notion does not require manual review or approval before public OAuth can be used in production.",
-      "confidence": "verified"
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.notion.com/docs/authorization"
     },
     {
       "claim": "Users must explicitly grant page-level permissions to the integration during or after OAuth authorization.",
-      "confidence": "from official docs",
+      "confidence": "From official docs",
       "sourceUrl": "https://developers.notion.com/docs/authorization"
     }
   ],
   "openQuestions": [
     "Will Notion introduce an app review process for integrations requesting workspace-wide search permissions in the future?"
-  ]
+  ],
+  "slug": "notion"
 }

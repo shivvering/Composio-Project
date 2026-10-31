@@ -2,59 +2,96 @@
   "appName": "Slack",
   "website": "https://api.slack.com",
   "lastChecked": "2026-10-31",
+  "manuallyChecked": true,
+  "lastVerified": "2026-10-31",
   "difficulty": {
     "level": "easy",
-    "reason": "Self-serve internal install with app manifests; review only required for the public Slack App Directory."
+    "reason": "Self-serve internal install with app manifests; review only required for the public Slack App Directory.",
+    "confidence": "From official docs",
+    "sourceUrl": "https://api.slack.com/quickstart"
   },
   "timeEstimate": {
     "setupTime": "10 - 20 minutes",
+    "setupTimeConfidence": "From official docs",
+    "setupTimeSourceUrl": "https://api.slack.com/quickstart",
     "approvalWait": "Instant for private workspaces; 2 - 4 weeks for public App Directory",
+    "approvalWaitConfidence": "From official docs",
+    "approvalWaitSourceUrl": "https://api.slack.com/authentication/oauth-v2",
     "notes": "Developers can immediately install and test in development workspaces without waiting for Slack approval."
   },
   "requirements": [
-    "A Slack workspace where you have admin or app creation permissions",
-    "HTTPS redirect URL (or localhost for development)",
-    "Valid privacy policy URL (if distributing publicly)",
-    "App icon (512x512 PNG) and short description"
+    {
+      "text": "A Slack workspace where you have admin or app creation permissions",
+      "confidence": "From official docs",
+      "sourceUrl": "https://api.slack.com/quickstart"
+    },
+    {
+      "text": "HTTPS redirect URL (or localhost for development)",
+      "confidence": "From official docs",
+      "sourceUrl": "https://api.slack.com/authentication/oauth-v2"
+    },
+    {
+      "text": "Valid privacy policy URL (if distributing publicly)",
+      "confidence": "From official docs",
+      "sourceUrl": "https://api.slack.com/legacy/start/distributing/guidelines"
+    },
+    {
+      "text": "App icon (512x512 PNG) and short description",
+      "confidence": "From official docs",
+      "sourceUrl": "https://api.slack.com/legacy/start/distributing/guidelines"
+    }
   ],
   "steps": [
     {
       "stepNumber": 1,
       "title": "Create an App via Manifest or Scratch",
       "description": "Go to api.slack.com/apps and click 'Create New App'. Selecting 'From an app manifest' allows pasting a YAML/JSON file with all permissions pre-configured.",
-      "actionUrl": "https://api.slack.com/apps"
+      "actionUrl": "https://api.slack.com/apps",
+      "confidence": "From official docs",
+      "sourceUrl": "https://api.slack.com/quickstart"
     },
     {
       "stepNumber": 2,
       "title": "Configure OAuth Redirect URLs & Scopes",
       "description": "Under 'OAuth & Permissions', add your redirect URL. Select Bot Token Scopes (e.g. chat:write, channels:read, users:read) based on the actions your agent will perform.",
-      "actionUrl": "https://api.slack.com/apps"
+      "actionUrl": "https://api.slack.com/apps",
+      "confidence": "From official docs",
+      "sourceUrl": "https://api.slack.com/authentication/oauth-v2"
     },
     {
       "stepNumber": 3,
       "title": "Install to Workspace for Immediate Testing",
       "description": "Click 'Install to Workspace' in the sidebar. Confirm permissions to generate a Bot User OAuth Token (`xoxb-...`) that can be used immediately.",
-      "actionUrl": "https://api.slack.com/apps"
+      "actionUrl": "https://api.slack.com/apps",
+      "confidence": "From official docs",
+      "sourceUrl": "https://api.slack.com/quickstart"
     },
     {
       "stepNumber": 4,
       "title": "Activate Public Distribution (Optional)",
       "description": "If external users will connect their own workspaces via OAuth, enable Public Distribution under 'Manage Distribution' and verify that all landing page URLs are live.",
-      "actionUrl": "https://api.slack.com/apps"
+      "actionUrl": "https://api.slack.com/apps",
+      "confidence": "From official docs",
+      "sourceUrl": "https://api.slack.com/legacy/start/distributing/guidelines"
     }
   ],
   "blockers": [
     {
       "problem": "Workspace administrator restricts non-approved third-party apps",
-      "solution": "Submit an in-workspace request to the Slack admin, or create a free personal Slack workspace for staging and development."
+      "solution": "Submit an in-workspace request to the Slack admin, or create a free personal Slack workspace for staging and development.",
+      "confidence": "Community reported"
     },
     {
       "problem": "Redirect URI mismatch error during OAuth code exchange",
-      "solution": "Verify that the redirect URL in your authorization request matches character-for-character the URL whitelisted under OAuth & Permissions."
+      "solution": "Verify that the redirect URL in your authorization request matches character-for-character the URL whitelisted under OAuth & Permissions.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://api.slack.com/authentication/oauth-v2"
     },
     {
       "problem": "Scope escalation invalidates previous user tokens",
-      "solution": "When adding new scopes, prompt existing users to re-authorize before making API calls with newly requested capabilities."
+      "solution": "When adding new scopes, prompt existing users to re-authorize before making API calls with newly requested capabilities.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://api.slack.com/authentication/oauth-v2"
     }
   ],
   "agentVsDeveloper": {
@@ -71,7 +108,7 @@
     ]
   },
   "managedOption": {
-    "managedSufficientWhen": "Using Composio or a managed OAuth provider is sufficient when building an internal AI agent or multi-tenant app where users connect their individual Slack workspaces via standard OAuth.",
+    "managedSufficientWhen": "Using Composio or a managed OAuth provider is sufficient when building an internal AI agent or multi-tenant app where users connect their individual Slack workspaces via standard OAuth. This tool was built for a Composio assignment, and Composio sells managed OAuth.",
     "customRequiredWhen": "You must register a custom Slack OAuth app if you require bespoke bot branding (custom name/avatar in Slack channels), enterprise Grid approval, or private slash commands."
   },
   "sources": [
@@ -91,19 +128,22 @@
   "claims": [
     {
       "claim": "Apps do not need Slack review or approval to be installed on development or private workspaces.",
-      "confidence": "verified"
+      "confidence": "From official docs",
+      "sourceUrl": "https://api.slack.com/quickstart"
     },
     {
       "claim": "Public distribution requires submitting a privacy policy, support URL, and passing Slack App Directory review.",
-      "confidence": "from official docs",
+      "confidence": "From official docs",
       "sourceUrl": "https://api.slack.com/legacy/start/distributing/guidelines"
     },
     {
       "claim": "Granular bot scopes are strictly enforced and cannot be changed dynamically per authorization.",
-      "confidence": "from official docs"
+      "confidence": "From official docs",
+      "sourceUrl": "https://api.slack.com/authentication/oauth-v2"
     }
   ],
   "openQuestions": [
     "How frequently does Slack audit enterprise workspace apps that use wide conversation history scopes without listing on the App Directory?"
-  ]
+  ],
+  "slug": "slack"
 }

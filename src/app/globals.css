@@ -224,6 +224,12 @@ a {
   border: 1px solid var(--docs-border);
 }
 
+.badge-confidence.community {
+  background-color: #f3e8ff;
+  color: #7e22ce;
+  border: 1px solid #d8b4fe;
+}
+
 .badge-confidence.unverified {
   background-color: var(--unverified-bg);
   color: var(--unverified-text);
