@@ -253,13 +253,11 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
               </h1>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <DifficultyBadge level={guide.difficulty.level} />
-                {guide.difficulty.confidence && (
-                  <ConfidenceBadge
-                    confidence={guide.difficulty.confidence}
-                    sourceUrl={guide.difficulty.sourceUrl}
-                    size="sm"
-                  />
-                )}
+                <ConfidenceBadge
+                  confidence={isUngrounded ? 'Unverified estimate' : (guide.difficulty.confidence || 'From official docs')}
+                  sourceUrl={isUngrounded ? undefined : guide.difficulty.sourceUrl}
+                  size="sm"
+                />
               </div>
             </div>
 
@@ -407,9 +405,9 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
             {guide.requirements.map((req, i) => {
               const isObj = typeof req === 'object' && req !== null;
               const text = isObj ? req.text : req;
-              const conf = isObj ? req.confidence : 'From official docs';
-              const src = isObj ? req.sourceUrl : undefined;
-              const notOfficial = !isOfficial(conf);
+              const conf = isUngrounded ? 'Unverified estimate' : (isObj ? req.confidence : 'From official docs');
+              const src = isUngrounded ? undefined : (isObj ? req.sourceUrl : undefined);
+              const notOfficial = isUngrounded || !isOfficial(conf);
 
               return (
                 <span
@@ -453,7 +451,9 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
 
           <div className="step-list">
             {guide.steps.map((step) => {
-              const notOfficial = !isOfficial(step.confidence);
+              const stepConf = isUngrounded ? 'Unverified estimate' : step.confidence;
+              const stepSrc = isUngrounded ? undefined : step.sourceUrl;
+              const notOfficial = isUngrounded || !isOfficial(stepConf);
               return (
                 <div
                   key={step.stepNumber}
@@ -476,8 +476,8 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
                       </h3>
                       {notOfficial && (
                         <ConfidenceBadge
-                          confidence={step.confidence}
-                          sourceUrl={step.sourceUrl}
+                          confidence={stepConf}
+                          sourceUrl={stepSrc}
                           size="sm"
                         />
                       )}
@@ -522,7 +522,9 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
 
           <div className="blockers-grid">
             {guide.blockers.map((blocker, i) => {
-              const notOfficial = !isOfficial(blocker.confidence);
+              const blockerConf = isUngrounded ? 'Unverified estimate' : blocker.confidence;
+              const blockerSrc = isUngrounded ? undefined : blocker.sourceUrl;
+              const notOfficial = isUngrounded || !isOfficial(blockerConf);
               return (
                 <div
                   key={i}
@@ -544,8 +546,8 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
                     </div>
                     {notOfficial && (
                       <ConfidenceBadge
-                        confidence={blocker.confidence}
-                        sourceUrl={blocker.sourceUrl}
+                        confidence={blockerConf}
+                        sourceUrl={blockerSrc}
                         size="sm"
                       />
                     )}
@@ -713,7 +715,8 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
 
         <div className="claims-list">
           {guide.claims.map((claim, i) => {
-            const notOfficial = !isOfficial(claim.confidence);
+            const claimConf = isUngrounded ? 'Unverified estimate' : claim.confidence;
+            const notOfficial = isUngrounded || !isOfficial(claimConf);
             return (
               <div
                 key={i}
@@ -721,7 +724,7 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
               >
                 <span className="claim-text">{claim.claim}</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
-                  {notOfficial && <ConfidenceBadge confidence={claim.confidence} size="sm" />}
+                  {notOfficial && <ConfidenceBadge confidence={claimConf} size="sm" />}
                   {claim.sourceUrl && (
                     <a
                       href={claim.sourceUrl}
