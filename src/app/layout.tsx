@@ -28,7 +28,7 @@ export default function RootLayout({
             <nav className="nav-links no-print">
               <Link href="/">Guides</Link>
               <Link href="/verification-log">Verification Log</Link>
-              <Link href="/how-it-works">How It Was Built</Link>
+              <Link href="/how-it-works">How It Works</Link>
               <a
                 href="https://composio.dev"
                 target="_blank"
@@ -50,16 +50,16 @@ export default function RootLayout({
               <strong>OAuth Path</strong> — Clear, verified OAuth setup & approval roadmaps for AI agent builders.
             </div>
             <div style={{ display: 'flex', gap: '1.25rem' }}>
-              <Link href="/" className="no-print">Directory</Link>
+              <Link href="/" className="no-print">Guides</Link>
               <Link href="/verification-log" className="no-print">Verification Log</Link>
-              <Link href="/how-it-works" className="no-print">Methodology & Architecture</Link>
+              <Link href="/how-it-works" className="no-print">How It Works</Link>
               <a
                 href="https://composio.dev"
                 target="_blank"
                 rel="noreferrer"
                 className="no-print"
               >
-                Managed OAuth by Composio
+                Composio
               </a>
             </div>
           </div>

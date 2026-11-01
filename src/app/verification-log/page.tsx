@@ -32,7 +32,7 @@ export default function VerificationLogPage() {
           }}
         >
           <ArrowLeft size={16} />
-          <span>Back to guides</span>
+          <span>Back to Guides</span>
         </Link>
       </div>
 

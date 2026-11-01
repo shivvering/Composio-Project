@@ -137,7 +137,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
           }}
         >
           <ChevronLeft size={16} />
-          <span>Back to all guides</span>
+          <span>Back to Guides</span>
         </Link>
 
         <div style={{ display: 'flex', gap: '0.6rem' }}>

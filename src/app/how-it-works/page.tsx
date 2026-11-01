@@ -16,7 +16,7 @@ import {
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'How This Was Built & Checked | OAuth Path',
+  title: 'How It Works | OAuth Path',
   description:
     'Methodology, verification standards, and architectural design behind OAuth Path and AI agent app approvals.',
 };
@@ -53,7 +53,7 @@ export default function HowItWorksPage() {
             color: 'var(--text-primary)',
           }}
         >
-          How OAuth Path was built and checked
+          How It Works
         </h1>
 
         <p
@@ -211,7 +211,8 @@ export default function HowItWorksPage() {
               marginBottom: '1rem',
             }}
           >
-            When generating a new guide on-demand, the agent queries Google Search Grounding to fetch
+            When generating a new guide on-demand, the agent queries the Google Gemini
+            <code>gemini-flash-lite-latest</code> model with Google Search Grounding to fetch
             live, authoritative developer documentation. However, free-tier Gemini API keys can hit
             strict tool rate limits (HTTP 429 Quota Exhausted).
           </p>
@@ -473,6 +474,9 @@ export default function HowItWorksPage() {
             }}
           >
             <li>
+              <strong>AI Model Engine:</strong> Uses Google Gemini <code>gemini-flash-lite-latest</code> with structured JSON output schema validation and Google Search grounding for real-time developer portal research.
+            </li>
+            <li>
               <strong>Zero Secret Leaks:</strong> API keys and OAuth client secrets are strictly
               stored in server environment variables and excluded from the repository via <code>.gitignore</code>.
             </li>
@@ -515,7 +519,7 @@ export default function HowItWorksPage() {
                 borderColor: 'var(--primary)',
               }}
             >
-              <span>Browse Catalog</span>
+              <span>Browse Guides</span>
               <ArrowRight size={14} />
             </Link>
           </div>

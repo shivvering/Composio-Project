@@ -65,7 +65,7 @@ npm start
 
 * **Framework:** [Next.js 14](https://nextjs.org/) (App Router, Server Components & Route Handlers)
 * **Language:** [TypeScript](https://www.typescriptlang.org/) (Strict schema-first typing)
-* **AI Research Engine:** Google Gemini API (`gemini-flash-lite-latest` / `gemini-3.5-flash-lite`) with native **Google Search Grounding**
+* **AI Research Engine:** Google Gemini API (`gemini-flash-lite-latest`) with native **Google Search Grounding**
 * **Icons:** [Lucide React](https://lucide.dev/) (Lightweight, accessible tree-shakeable icons)
 * **Styling:** Custom CSS with CSS variables and print-optimized stylesheets (`@media print`)
 
