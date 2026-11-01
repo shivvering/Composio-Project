@@ -28,7 +28,7 @@ export default function RootLayout({
             <nav className="nav-links no-print">
               <Link href="/">Guides</Link>
               <Link href="/verification-log">Verification Log</Link>
-              <Link href="/how-it-works">How It Works</Link>
+              <Link href="/how-it-works">How it works</Link>
               <a
                 href="https://composio.dev"
                 target="_blank"
@@ -52,7 +52,7 @@ export default function RootLayout({
             <div style={{ display: 'flex', gap: '1.25rem' }}>
               <Link href="/" className="no-print">Guides</Link>
               <Link href="/verification-log" className="no-print">Verification Log</Link>
-              <Link href="/how-it-works" className="no-print">How It Works</Link>
+              <Link href="/how-it-works" className="no-print">How it works</Link>
               <a
                 href="https://composio.dev"
                 target="_blank"

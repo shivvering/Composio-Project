@@ -78,6 +78,7 @@ export interface OAuthGuide {
   website: string;
   lastChecked: string;
   manuallyChecked?: boolean;
+  spotChecked?: boolean;
   lastVerified?: string;
   groundedWithSearch?: boolean;
   difficulty: Difficulty;

@@ -12,7 +12,7 @@ import {
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'How It Works | OAuth Path',
+  title: 'How it works | OAuth Path',
   description:
     'Honest, transparent methodology behind how OAuth Path guides are drafted, labeled, and checked.',
 };
@@ -49,7 +49,7 @@ export default function HowItWorksPage() {
             color: 'var(--text-primary)',
           }}
         >
-          How It Works
+          How it works
         </h1>
 
         <p

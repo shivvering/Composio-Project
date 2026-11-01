@@ -11,11 +11,11 @@
   {
     "guide": "Google",
     "guideSlug": "google",
-    "claim": "Apps requesting restricted Google scopes (such as Gmail full access) must undergo an annual CASA Tier 2 security assessment.",
+    "claim": "Apps requesting restricted Google scopes (e.g., Gmail full access: https://mail.google.com/) must undergo an annual CASA Tier 2 security assessment.",
     "source": "https://appdefensealliance.org/casa",
     "sourceTitle": "App Defense Alliance: CASA",
     "status": "verified correct",
-    "notes": "Confirmed against current Google Trust & Safety API Services User Data Policy for Gmail and Google Drive scopes."
+    "notes": "Confirmed against current Google Trust & Safety API Services User Data Policy for restricted scopes like Gmail full access (https://mail.google.com/)."
   },
   {
     "guide": "Google",

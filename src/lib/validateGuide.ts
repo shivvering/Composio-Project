@@ -176,6 +176,7 @@ export function validateOAuthGuide(input: any): ValidationResult {
     website: input.website.trim(),
     lastChecked: input.lastChecked.trim(),
     manuallyChecked: Boolean(input.manuallyChecked),
+    ...(typeof input.spotChecked === 'boolean' ? { spotChecked: input.spotChecked } : {}),
     ...(input.lastVerified ? { lastVerified: String(input.lastVerified).trim() } : {}),
     ...(typeof input.groundedWithSearch === 'boolean' ? { groundedWithSearch: input.groundedWithSearch } : {}),
     difficulty: {

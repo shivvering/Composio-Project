@@ -197,7 +197,9 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
         <Sparkles size={18} color="#7c3aed" style={{ flexShrink: 0, marginTop: '2px' }} />
         <div>
           <strong>
-            {guide.manuallyChecked
+            {params.slug?.toLowerCase() === 'google' || guide.slug === 'google' || guide.spotChecked
+              ? `AI generated, spot checked on ${guide.lastVerified || guide.lastChecked}:`
+              : guide.manuallyChecked
               ? `Manually Verified Guide (Last verified ${guide.lastVerified || guide.lastChecked}):`
               : `Generated on ${guide.lastChecked}:`}
           </strong>{' '}
@@ -294,7 +296,9 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
                 <Calendar size={14} />
                 <span>
-                  {guide.manuallyChecked
+                  {params.slug?.toLowerCase() === 'google' || guide.slug === 'google' || guide.spotChecked
+                    ? `AI generated, spot checked on ${guide.lastVerified || guide.lastChecked}`
+                    : guide.manuallyChecked
                     ? `Last verified: ${guide.lastVerified || guide.lastChecked}`
                     : `Generated on ${guide.lastChecked}`}
                 </span>
