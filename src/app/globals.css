@@ -628,6 +628,204 @@ a {
   }
 }
 
+/* At a Glance Box */
+.at-a-glance-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--primary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.at-a-glance-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.at-a-glance-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.at-a-glance-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .at-a-glance-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .at-a-glance-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.at-a-glance-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1rem;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+}
+
+.at-a-glance-item.blocker-item {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+}
+
+.at-a-glance-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.775rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.at-a-glance-val {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+.at-a-glance-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* Collapsible Section Styles */
+details.guide-collapsible-section {
+  margin-top: 1.25rem;
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  background-color: var(--bg-surface);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+details.guide-collapsible-section:hover {
+  border-color: var(--border-strong);
+}
+
+details.guide-collapsible-section[open] {
+  box-shadow: var(--shadow-sm);
+  border-color: var(--border-strong);
+}
+
+summary.guide-collapsible-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.15rem 1.35rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  background-color: var(--bg-surface);
+  transition: background-color 0.15s ease;
+}
+
+summary.guide-collapsible-summary::-webkit-details-marker {
+  display: none;
+}
+
+summary.guide-collapsible-summary:hover {
+  background-color: var(--bg-subtle);
+}
+
+.guide-collapsible-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.guide-collapsible-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.guide-collapsible-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  background-color: var(--bg-muted);
+  color: var(--text-muted);
+}
+
+.guide-collapsible-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.collapsible-chevron {
+  transition: transform 0.2s ease;
+  color: var(--text-muted);
+}
+
+details.guide-collapsible-section[open] .collapsible-chevron {
+  transform: rotate(180deg);
+}
+
+.guide-collapsible-content {
+  padding: 1.35rem;
+  border-top: 1px solid var(--border-light);
+  background-color: var(--bg-surface);
+}
+
+/* Highlighted items that are NOT 'From official docs' */
+.step-card.highlighted-non-official {
+  border-color: #f59e0b;
+  background-color: #fffbeb;
+  box-shadow: 0 1px 3px rgba(245, 158, 11, 0.1);
+}
+
+.blocker-card.highlighted-non-official {
+  border-color: #f59e0b;
+  background-color: #fffbeb;
+  box-shadow: 0 1px 3px rgba(245, 158, 11, 0.1);
+}
+
+.req-badge.highlighted-non-official {
+  border: 1px solid #f59e0b !important;
+  background-color: #fffbeb !important;
+  color: #92400e !important;
+  font-weight: 600 !important;
+}
+
+.claim-item.highlighted-non-official {
+  border-color: #f59e0b;
+  background-color: #fffbeb;
+}
+
 /* Print Friendly Styles */
 @media print {
   body {
@@ -653,6 +851,25 @@ a {
   .guide-section {
     page-break-inside: avoid;
     border-top: 1px solid #cccccc !important;
+  }
+
+  details.guide-collapsible-section {
+    display: block !important;
+    border: 1px solid #cccccc !important;
+    margin-top: 1.5rem !important;
+  }
+
+  details.guide-collapsible-section > summary {
+    display: flex !important;
+    border-bottom: 1px solid #cccccc !important;
+  }
+
+  details.guide-collapsible-section > .guide-collapsible-content {
+    display: block !important;
+  }
+
+  .collapsible-chevron {
+    display: none !important;
   }
 
   .step-card,
