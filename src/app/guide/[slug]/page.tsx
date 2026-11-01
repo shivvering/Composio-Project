@@ -55,6 +55,10 @@ interface GuidePageProps {
   params: {
     slug: string;
   };
+  searchParams?: {
+    fallback?: string;
+    unverified?: string;
+  };
 }
 
 export const dynamicParams = true;
@@ -79,7 +83,7 @@ export function generateMetadata({ params }: GuidePageProps): Metadata {
   };
 }
 
-export default async function GuidePage({ params }: GuidePageProps) {
+export default async function GuidePage({ params, searchParams }: GuidePageProps) {
   let guide = getGuideBySlug(params.slug);
 
   // If not found in static/bundled cache, attempt live research on demand
@@ -97,7 +101,8 @@ export default async function GuidePage({ params }: GuidePageProps) {
     return <GuideNotFound slug={params.slug} />;
   }
 
-  const isUngrounded = guide.groundedWithSearch === false;
+  const forceFallback = searchParams?.fallback === 'true' || searchParams?.unverified === 'true';
+  const isUngrounded = guide.groundedWithSearch === false || forceFallback;
   const biggestBlocker = guide.blockers && guide.blockers.length > 0 ? guide.blockers[0] : null;
 
   const reqSectionConfidence = getSectionConfidence(
@@ -147,7 +152,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
       </div>
 
       {/* Fallback Warning Banner if generated without Google Search grounding */}
-      {guide.groundedWithSearch === false && (
+      {isUngrounded && (
         <div
           role="alert"
           style={{
@@ -298,8 +303,76 @@ export default async function GuidePage({ params }: GuidePageProps) {
           </div>
         </div>
 
-        {/* Time Estimate Timeline */}
-        <TimeTimeline timeEstimate={guide.timeEstimate} />
+        {/* At a glance Box */}
+        <div className="at-a-glance-card" style={{ marginTop: '1.5rem', marginBottom: '1.25rem', backgroundColor: 'var(--bg-subtle)' }}>
+          <div className="at-a-glance-header">
+            <div className="at-a-glance-title">
+              <Zap size={20} color="var(--primary)" />
+              <span>At a glance</span>
+            </div>
+            <span style={{ fontSize: '0.825rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+              Executive breakdown in plain language
+            </span>
+          </div>
+
+          <div className="at-a-glance-grid">
+            {/* Difficulty */}
+            <div className="at-a-glance-item" style={{ backgroundColor: 'var(--bg-surface)' }}>
+              <div className="at-a-glance-label">
+                <Activity size={15} color="var(--primary)" />
+                <span>Difficulty</span>
+              </div>
+              <div className="at-a-glance-val" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <DifficultyBadge level={guide.difficulty.level} />
+              </div>
+              <p className="at-a-glance-desc">{guide.difficulty.reason}</p>
+            </div>
+
+            {/* Setup Time */}
+            <div className="at-a-glance-item" style={{ backgroundColor: 'var(--bg-surface)' }}>
+              <div className="at-a-glance-label">
+                <Clock size={15} color="var(--primary)" />
+                <span>Setup Time</span>
+              </div>
+              <div className="at-a-glance-val">
+                {guide.timeEstimate.setupTime}
+              </div>
+              <p className="at-a-glance-desc">
+                Active engineering effort required to register the OAuth app, set redirect URLs, and obtain credentials.
+              </p>
+            </div>
+
+            {/* Approval Wait */}
+            <div className="at-a-glance-item" style={{ backgroundColor: 'var(--bg-surface)' }}>
+              <div className="at-a-glance-label">
+                <Hourglass size={15} color="#d97706" />
+                <span>Approval Wait</span>
+              </div>
+              <div className="at-a-glance-val">
+                {guide.timeEstimate.approvalWait}
+              </div>
+              <p className="at-a-glance-desc">
+                {guide.timeEstimate.notes || 'Turnaround duration before production scopes or public app authorizations are approved.'}
+              </p>
+            </div>
+
+            {/* Single Biggest Blocker */}
+            <div className="at-a-glance-item blocker-item">
+              <div className="at-a-glance-label" style={{ color: '#b91c1c' }}>
+                <AlertTriangle size={15} color="#dc2626" />
+                <span>Biggest Blocker</span>
+              </div>
+              <div className="at-a-glance-val" style={{ color: '#991b1b', fontSize: '0.95rem' }}>
+                {biggestBlocker ? biggestBlocker.problem : 'No critical blockers identified'}
+              </div>
+              {biggestBlocker && (
+                <p className="at-a-glance-desc" style={{ color: '#7f1d1d' }}>
+                  <strong>Fix: </strong>{biggestBlocker.solution}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
 
         {/* Prerequisites & Requirements */}
         <div style={{ marginTop: '1.25rem' }}>
@@ -355,77 +428,6 @@ export default async function GuidePage({ params }: GuidePageProps) {
           </div>
         </div>
       </header>
-
-      {/* At a glance Box */}
-      <div className="at-a-glance-card">
-        <div className="at-a-glance-header">
-          <div className="at-a-glance-title">
-            <Zap size={20} color="var(--primary)" />
-            <span>At a glance</span>
-          </div>
-          <span style={{ fontSize: '0.825rem', color: 'var(--text-muted)', fontWeight: 500 }}>
-            Executive breakdown in plain language
-          </span>
-        </div>
-
-        <div className="at-a-glance-grid">
-          {/* Difficulty */}
-          <div className="at-a-glance-item">
-            <div className="at-a-glance-label">
-              <Activity size={15} color="var(--primary)" />
-              <span>Difficulty</span>
-            </div>
-            <div className="at-a-glance-val" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <DifficultyBadge level={guide.difficulty.level} />
-            </div>
-            <p className="at-a-glance-desc">{guide.difficulty.reason}</p>
-          </div>
-
-          {/* Setup Time */}
-          <div className="at-a-glance-item">
-            <div className="at-a-glance-label">
-              <Clock size={15} color="var(--primary)" />
-              <span>Setup Time</span>
-            </div>
-            <div className="at-a-glance-val">
-              {guide.timeEstimate.setupTime}
-            </div>
-            <p className="at-a-glance-desc">
-              Active engineering effort required to register the OAuth app, set redirect URLs, and obtain credentials.
-            </p>
-          </div>
-
-          {/* Approval Wait */}
-          <div className="at-a-glance-item">
-            <div className="at-a-glance-label">
-              <Hourglass size={15} color="#d97706" />
-              <span>Approval Wait</span>
-            </div>
-            <div className="at-a-glance-val">
-              {guide.timeEstimate.approvalWait}
-            </div>
-            <p className="at-a-glance-desc">
-              {guide.timeEstimate.notes || 'Turnaround duration before production scopes or public app authorizations are approved.'}
-            </p>
-          </div>
-
-          {/* Single Biggest Blocker */}
-          <div className="at-a-glance-item blocker-item">
-            <div className="at-a-glance-label" style={{ color: '#b91c1c' }}>
-              <AlertTriangle size={15} color="#dc2626" />
-              <span>Biggest Blocker</span>
-            </div>
-            <div className="at-a-glance-val" style={{ color: '#991b1b', fontSize: '0.95rem' }}>
-              {biggestBlocker ? biggestBlocker.problem : 'No critical blockers identified'}
-            </div>
-            {biggestBlocker && (
-              <p className="at-a-glance-desc" style={{ color: '#7f1d1d' }}>
-                <strong>Fix: </strong>{biggestBlocker.solution}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
 
       {/* Section 1: Step-by-Step Setup (Collapsible) */}
       <details className="guide-collapsible-section">
