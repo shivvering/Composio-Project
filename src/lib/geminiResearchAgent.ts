@@ -81,7 +81,7 @@ async function callGeminiWithSearch(
   modelName: string = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest',
   timeoutMs: number = 45000,
   enableSearch: boolean = true
-): Promise<any> {
+): Promise<{ data: any; groundedWithSearch: boolean }> {
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`;
 
   const payload: any = {
@@ -135,7 +135,7 @@ async function callGeminiWithSearch(
     }
 
     const data = await response.json();
-    return data;
+    return { data, groundedWithSearch: enableSearch };
   } catch (error: any) {
     clearTimeout(timer);
     if (error.name === 'AbortError') {
@@ -298,7 +298,9 @@ ${extraFeedback ? `\nPREVIOUS ATTEMPT FAILED WITH THESE ERRORS:\n${extraFeedback
 
   // 3. Execution
   const primaryModel = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest';
-  let rawResponse = await callGeminiWithSearch(buildPrompt(), apiKey, primaryModel);
+  let geminiResult = await callGeminiWithSearch(buildPrompt(), apiKey, primaryModel);
+  let rawResponse = geminiResult.data;
+  let isGrounded = geminiResult.groundedWithSearch;
 
   const parseAndExtractSources = (response: any) => {
     const candidate = response.candidates?.[0];
@@ -345,7 +347,9 @@ ${extraFeedback ? `\nPREVIOUS ATTEMPT FAILED WITH THESE ERRORS:\n${extraFeedback
     console.warn('Initial validation failed with errors:', validation.errors);
     const feedback = validation.errors.join('\n');
     try {
-      rawResponse = await callGeminiWithSearch(buildPrompt(feedback), apiKey, primaryModel);
+      geminiResult = await callGeminiWithSearch(buildPrompt(feedback), apiKey, primaryModel, 45000, isGrounded);
+      rawResponse = geminiResult.data;
+      isGrounded = geminiResult.groundedWithSearch;
       parsed = parseAndExtractSources(rawResponse);
       validation = validateOAuthGuide(parsed);
     } catch (retryErr: any) {
@@ -363,6 +367,55 @@ ${extraFeedback ? `\nPREVIOUS ATTEMPT FAILED WITH THESE ERRORS:\n${extraFeedback
   const finalSlug = createSlug(finalGuide.appName) || querySlug;
   finalGuide.slug = finalSlug;
   finalGuide.manuallyChecked = false; // Always marked as AI-generated unless manually verified
+  finalGuide.groundedWithSearch = isGrounded;
+
+  // When retrying without Google Search because of 429 quota exhaustion (or ungrounded):
+  // Force every confidence label to 'Unverified estimate', remove claims that say 'From official docs'
+  if (!isGrounded) {
+    finalGuide.difficulty.confidence = 'Unverified estimate';
+    finalGuide.timeEstimate.setupTimeConfidence = 'Unverified estimate';
+    finalGuide.timeEstimate.approvalWaitConfidence = 'Unverified estimate';
+
+    finalGuide.requirements = finalGuide.requirements.map((req) => {
+      if (typeof req === 'string') {
+        return { text: req, confidence: 'Unverified estimate' };
+      }
+      return {
+        ...req,
+        confidence: 'Unverified estimate',
+      };
+    });
+
+    finalGuide.steps = finalGuide.steps.map((step) => ({
+      ...step,
+      confidence: 'Unverified estimate',
+    }));
+
+    finalGuide.blockers = finalGuide.blockers.map((b) => ({
+      ...b,
+      confidence: 'Unverified estimate',
+    }));
+
+    // Remove claims that say 'From official docs' and force remaining to 'Unverified estimate'
+    finalGuide.claims = finalGuide.claims
+      .filter((c) => {
+        const conf = (c.confidence || '').toLowerCase();
+        return !conf.includes('official') && !conf.includes('docs');
+      })
+      .map((c) => ({
+        ...c,
+        confidence: 'Unverified estimate' as const,
+      }));
+
+    if (finalGuide.claims.length === 0) {
+      finalGuide.claims = [
+        {
+          claim: `${finalGuide.appName} OAuth app registration workflow and permission configuration.`,
+          confidence: 'Unverified estimate',
+        },
+      ];
+    }
+  }
 
   // Ensure Composio assignment note is present in managedOption
   const composioNote = 'This tool was built for a Composio assignment, and Composio sells managed OAuth.';

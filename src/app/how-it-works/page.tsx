@@ -185,7 +185,7 @@ export default function HowItWorksPage() {
           </div>
         </section>
 
-        {/* Section 2: Agent vs Developer Division of Labor */}
+        {/* Section 2: Google Search Grounding & 429 Fallback */}
         <section
           style={{
             marginBottom: '3rem',
@@ -201,7 +201,86 @@ export default function HowItWorksPage() {
               color: 'var(--text-primary)',
             }}
           >
-            2. The Agent vs. Developer Boundary
+            2. Google Search Grounding & The 429 Quota Fallback
+          </h2>
+          <p
+            style={{
+              fontSize: '0.975rem',
+              lineHeight: 1.6,
+              color: 'var(--text-secondary)',
+              marginBottom: '1rem',
+            }}
+          >
+            When generating a new guide on-demand, the agent queries Google Search Grounding to fetch
+            live, authoritative developer documentation. However, free-tier Gemini API keys can hit
+            strict tool rate limits (HTTP 429 Quota Exhausted).
+          </p>
+          <p
+            style={{
+              fontSize: '0.975rem',
+              lineHeight: 1.6,
+              color: 'var(--text-secondary)',
+              marginBottom: '1.25rem',
+            }}
+          >
+            To prevent generation failures while maintaining complete intellectual honesty, our system
+            implements an automated fallback pipeline:
+          </p>
+
+          <div
+            style={{
+              padding: '1.25rem',
+              borderRadius: '8px',
+              backgroundColor: '#fffbeb',
+              border: '1px solid #fde68a',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.75rem',
+              fontSize: '0.9rem',
+              color: '#92400e',
+              lineHeight: 1.5,
+            }}
+          >
+            <div style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span>⚠️ What happens when Google Search is throttled (429):</span>
+            </div>
+            <ul style={{ paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+              <li>
+                <strong>Automatic Retry Without Search:</strong> The agent catches the 429 and retries the generation immediately without the <code>google_search</code> tool, relying strictly on model parametric knowledge.
+              </li>
+              <li>
+                <strong>Flag Set to False:</strong> The guide sets <code>groundedWithSearch: false</code>.
+              </li>
+              <li>
+                <strong>Confidence Downgrade:</strong> Every single field (difficulty, setup time, approval wait, requirements, steps, blockers, and claims) is forcibly downgraded to <code>Unverified estimate</code>.
+              </li>
+              <li>
+                <strong>Official Docs Claims Purged:</strong> Any claims citing <code>From official docs</code> are removed because no live documentation was consulted.
+              </li>
+              <li>
+                <strong>Prominent Warning Banner:</strong> A clear banner is displayed at the top of the guide: <em>&ldquo;Generated without web search. Treat everything on this page as unverified.&rdquo;</em>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        {/* Section 3: Agent vs Developer Division of Labor */}
+        <section
+          style={{
+            marginBottom: '3rem',
+            paddingBottom: '2.5rem',
+            borderBottom: '1px solid var(--border-light)',
+          }}
+        >
+          <h2
+            style={{
+              fontSize: '1.4rem',
+              fontWeight: 700,
+              marginBottom: '0.75rem',
+              color: 'var(--text-primary)',
+            }}
+          >
+            3. The Agent vs. Developer Boundary
           </h2>
           <p
             style={{
@@ -303,7 +382,7 @@ export default function HowItWorksPage() {
           </div>
         </section>
 
-        {/* Section 3: The Managed OAuth Paradigm (Composio) */}
+        {/* Section 4: The Managed OAuth Paradigm (Composio) */}
         <section
           style={{
             marginBottom: '3rem',
@@ -319,7 +398,7 @@ export default function HowItWorksPage() {
               color: 'var(--text-primary)',
             }}
           >
-            3. The Managed OAuth Trade-off
+            4. The Managed OAuth Trade-off
           </h2>
           <p
             style={{
@@ -370,7 +449,7 @@ export default function HowItWorksPage() {
           </div>
         </section>
 
-        {/* Section 4: Architecture & Security */}
+        {/* Section 5: Architecture & Security */}
         <section style={{ marginBottom: '2.5rem' }}>
           <h2
             style={{
@@ -380,7 +459,7 @@ export default function HowItWorksPage() {
               color: 'var(--text-primary)',
             }}
           >
-            4. Architecture & Security Guarantees
+            5. Architecture & Security Guarantees
           </h2>
           <ul
             style={{

@@ -76,8 +76,11 @@ npm start
 1. **Schema-First Canonical Structure:**
    Every guide (whether manually curated or generated via AI) validates against an explicit JSON schema and TypeScript interface ([`src/types/guide.ts`](src/types/guide.ts)). This guarantees that essential dimensions—such as difficulty rating, setup vs. approval wait timeline, blockers, agent boundaries, and confidence levels—are always present.
 
-2. **Grounding with Google Search:**
+2. **Grounding with Google Search & 429 Quota Fallback:**
    Rather than relying purely on pre-trained parametric memory (which hallucinates outdated review policies), the live research agent (`POST /api/generate`) utilizes Google Search grounding to retrieve real developer documentation. Source URLs are extracted directly from grounding chunks to prevent URL hallucination.
+   * **Graceful 429 Handling:** When free-tier Gemini API keys hit rate limits (`HTTP 429 RESOURCE_EXHAUSTED`) on the Google Search tool, the engine automatically catches the error and retries the prompt without the search tool.
+   * **Strict Fallback Auditing (`groundedWithSearch: false`):** When retrying without search grounding, the guide sets `groundedWithSearch: false`. In this scenario, every field confidence label (difficulty, setup time, approval wait, requirements, steps, blockers, and claims) is forcibly downgraded to `'Unverified estimate'`, any claims marked `'From official docs'` are purged, and a prominent warning banner is displayed at the top of the guide:
+     > *"Generated without web search. Treat everything on this page as unverified."*
 
 3. **Two-Tier Resilient Storage (Vercel Ready):**
    Standard guides are bundled directly in `/data/guides/` as JSON. In serverless environments like Vercel (where the project directory is read-only at runtime), newly generated guides automatically write to `/tmp/guides/` and are held in an in-memory cache, ensuring the application never crashes with `EROFS` errors.
@@ -95,7 +98,7 @@ npm start
 * **Provider Policy Drift:** Third-party developer portals change their submission procedures, review criteria, and pricing tiers frequently. While the verification confidence labels (`verified`, `from official docs`, `unverified`) reflect the state at `lastChecked`, production teams must always verify with live provider docs.
 * **Agent Automation Boundaries:** AI agents can draft manifests, construct PKCE challenge parameters, and write justification narratives, but they cannot solve CAPTCHAs, pass 2FA SMS challenges, accept legal agreements, or pay third-party security lab audit fees on behalf of developers.
 * **Serverless Ephemeral Storage:** On Vercel, dynamically generated guides saved to `/tmp` and memory persist for the lifetime of the warm lambda container. In high-traffic production, persisting dynamic guides permanently across global serverless edges would require an external store like Vercel KV, Redis, or PostgreSQL.
-* **Free-Tier Search Quotas:** Free-tier Gemini keys have strict request-per-minute and daily caps for Google Search grounding. When search quota is exceeded, the research engine falls back to direct model knowledge.
+* **Free-Tier Search Quotas & Automatic Fallback:** Free-tier Gemini keys have strict request-per-minute and daily caps for Google Search grounding. When the search quota is exceeded (HTTP 429), the research engine falls back to direct model knowledge, sets `groundedWithSearch: false`, strips "From official docs" claims, demotes all field confidence ratings to "Unverified estimate", and displays a prominent warning banner.
 
 ---
 
@@ -104,7 +107,7 @@ npm start
 1. **Vercel Cache Lifetime on Cold Starts:**
    Newly generated guides created by one user in a serverless lambda are stored in `/tmp` and memory. When Vercel spins down or relocates the lambda instance, those dynamically researched guides will be regenerated on the next request unless they were committed to the `/data/guides` repository folder.
 2. **Google Search Tool Rate Limits (HTTP 429):**
-   If a user submits multiple live research requests in quick succession on a standard free-tier Gemini API key, Google Search grounding may trigger a `429 RESOURCE_EXHAUSTED` status. The agent catches this and falls back to model retrieval, but deep inline citations may be limited.
+   If a user submits multiple live research requests in quick succession on a standard free-tier Gemini API key, Google Search grounding triggers a `429 RESOURCE_EXHAUSTED` status. The agent automatically retries without search, tags the guide with `groundedWithSearch: false`, purges claims marked "From official docs", demotes all confidence ratings to "Unverified estimate", and renders the alert banner: *"Generated without web search. Treat everything on this page as unverified."*
 3. **Multi-page Safari Print Scaling:**
    When printing long guides to PDF in Safari on macOS, Safari may occasionally break long code blocks or blocker cards across two pages awkwardly. Firefox and Chromium render the `@media print` page-break rules cleanly.
 4. **Dynamic Slug Collisions:**

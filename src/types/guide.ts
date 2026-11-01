@@ -79,6 +79,7 @@ export interface OAuthGuide {
   lastChecked: string;
   manuallyChecked?: boolean;
   lastVerified?: string;
+  groundedWithSearch?: boolean;
   difficulty: Difficulty;
   timeEstimate: TimeEstimate;
   requirements: (string | RequirementItem)[];

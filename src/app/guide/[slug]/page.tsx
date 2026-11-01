@@ -104,6 +104,33 @@ export default async function GuidePage({ params }: GuidePageProps) {
         </div>
       </div>
 
+      {/* Fallback Warning Banner if generated without Google Search grounding */}
+      {guide.groundedWithSearch === false && (
+        <div
+          role="alert"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            padding: '1rem 1.25rem',
+            borderRadius: '10px',
+            backgroundColor: '#fffbeb',
+            border: '2px solid #f59e0b',
+            marginBottom: '1.25rem',
+            fontSize: '0.95rem',
+            fontWeight: 700,
+            lineHeight: 1.5,
+            color: '#92400e',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+          }}
+        >
+          <AlertTriangle size={20} color="#d97706" style={{ flexShrink: 0 }} />
+          <span>
+            Generated without web search. Treat everything on this page as unverified.
+          </span>
+        </div>
+      )}
+
       {/* Visible AI-Generated Label with Date & Official Docs Reminder */}
       <div
         style={{
