@@ -14,7 +14,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'How it works | OAuth Path',
   description:
-    'Honest, transparent methodology behind how OAuth Path guides are drafted, labeled, and checked.',
+    'An honest explanation of how OAuth Path guides are drafted, labeled, checked, and limited.',
 };
 
 export default function HowItWorksPage() {
@@ -81,7 +81,7 @@ export default function HowItWorksPage() {
             </h2>
           </div>
           <p style={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--text-secondary)', margin: 0 }}>
-            An AI agent (Gemini with Google Search) drafts each guide in a fixed format, with a confidence label on each item. Source links come from search results, and links that do not load are removed.
+            An AI agent (Gemini with Google Search) drafts each guide in a fixed format. Source links come from the search results, and links that do not load are removed.
           </p>
         </section>
 
@@ -103,7 +103,7 @@ export default function HowItWorksPage() {
             </h2>
           </div>
           <p style={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--text-secondary)', margin: 0 }}>
-            <strong>From official docs</strong>, <strong>Community reported</strong>, <strong>Unverified estimate</strong>. These labels are assigned by the AI. I checked a sample manually, and those are listed in the{' '}
+            <strong>From official docs</strong>, <strong>Community reported</strong>, <strong>Unverified estimate</strong>. The AI assigns these labels. I checked a sample by hand, and those checks are in the{' '}
             <Link
               href="/verification-log"
               style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'underline' }}
@@ -132,11 +132,11 @@ export default function HowItWorksPage() {
             </h2>
           </div>
           <p style={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--text-secondary)', margin: 0 }}>
-            I created a Google OAuth app in testing mode and configured basic scopes. Everything else comes from documentation.
+            I created a Google OAuth app in testing mode and set up basic scopes. Everything else comes from documentation.
           </p>
         </section>
 
-        {/* Section 4: Fallback */}
+        {/* Section 4: When search is unavailable */}
         <section
           style={{
             marginBottom: '1.75rem',
@@ -150,7 +150,7 @@ export default function HowItWorksPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem' }}>
             <AlertTriangle size={20} color="#d97706" />
             <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0, color: '#92400e' }}>
-              Fallback
+              When search is unavailable
             </h2>
           </div>
           <p style={{ fontSize: '1rem', lineHeight: 1.65, color: '#92400e', margin: 0 }}>
@@ -176,7 +176,7 @@ export default function HowItWorksPage() {
             </h2>
           </div>
           <p style={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--text-secondary)', margin: 0 }}>
-            The AI can read and summarise documentation. It cannot register apps, accept terms or pass reviews.
+            The AI can read and summarise documentation. It cannot register apps, accept terms or pass reviews for a developer.
           </p>
         </section>
 

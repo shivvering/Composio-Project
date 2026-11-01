@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Verification Log | OAuth Path',
   description:
-    'Full verification log tracking claims tested in production, corrected statements, and official documentation sources.',
+    'Full verification log tracking sample checks against official developer documentation and testing.',
 };
 
 export default function VerificationLogPage() {
@@ -75,9 +75,7 @@ export default function VerificationLogPage() {
             color: 'var(--text-secondary)',
           }}
         >
-          Every key claim across our guides is continuously cross-examined against real production
-          behavior and official developer documentation. This log tracks our test findings,
-          remedied assumptions, and items currently undergoing confirmation.
+          Sample claims across our guides checked against developer documentation and testing. This log tracks our test findings, remedied assumptions, and items currently undergoing confirmation.
         </p>
       </div>
 
