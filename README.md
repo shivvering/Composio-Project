@@ -1,114 +1,87 @@
-# OAuth Path 🧭
+# OAuth Path
 
-> AI generated, checked against official docs where marked. Clear guides on navigating OAuth setup, approval wait times, and compliance requirements for AI agent builders.
+A guide library with a live research agent. A developer searches an app and gets a guide that shows how hard its OAuth setup is, how long approval takes, what can block them, and what to do next.
 
-Connecting an AI agent to third-party services like Gmail, Slack, and Notion is quick in code, but navigating third-party OAuth app approvals is confusing and unpredictable. Every provider is different: approval can take hours or weeks, and developers often have to email providers or get blocked by unexpected CASA security audits.
+Live site: https://composio-project-mauve.vercel.app/
+Repo: https://github.com/shivvering/Composio-Project
 
-**OAuth Path** provides clear, structured, shareable guides for popular providers, plus a **live research agent** that can research any unlisted app or website on demand using Google Search grounding.
+## What OAuth is, in my words
+OAuth lets one app use your data in another app without ever seeing your password. When a developer builds an AI agent, their users want to connect apps like Google or Slack. To allow that, the developer often has to create an "OAuth app" with the provider and sometimes get it approved. That setup is confusing and can take an hour or several weeks.
 
----
+## The problem I focused on
+Developers cannot easily tell how hard setup will be and what might block them. So each guide starts with a quick summary (difficulty, setup time, approval wait), then requirements, steps, common blockers, and what an agent can do versus what the developer must do.
 
-## 🚀 Setup & Local Development
+## My background
+I come from a non programming background. I spent the first day learning what OAuth is and how Composio fits in, then built the app with Antigravity.
 
-### Prerequisites
-* **Node.js** >= 18.17 (Node 20 or 24 recommended)
-* **npm**, **pnpm**, or **yarn**
-* A Google Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+## How to run it
+1. Run npm install.
+2. Copy .env.example to .env.local and add your GEMINI_API_KEY.
+3. Run npm run dev.
+Credentials are not in the repo.
 
-### 1. Install Dependencies
-```bash
-git clone <repo-url>
-cd oauth-path
-npm install
+## How it works
+1. A developer searches an app name or website.
+2. The app asks Gemini (model gemini-flash-lite-latest) to search Google and read real pages.
+3. Gemini fills in a fixed guide template. Every field has a label: From official docs, Community reported, Estimate, or Could not confirm. If it cannot find something, it says "Not stated in sources" instead of guessing.
+4. My code checks the guide has every required part. If not, Gemini tries once more.
+5. My code checks every source link opens. Dead links are removed.
+6. The guide is shown with a banner saying it is AI generated.
+If Google Search is not available (for example the free quota ran out), the agent writes the guide without search and marks it unverified.
+
+```mermaid
+flowchart TD
+    A[Developer searches app or website] --> B{Guide already in library?}
+    B -- Yes --> C[Display existing guide instantly]
+    B -- No --> D[Live Agent triggers Gemini API]
+    D --> E{Google Search available?}
+    E -- Yes --> F[Ground response with real Google Search results]
+    E -- No (429 quota) --> G[Fallback: Draft guide without search & mark unverified]
+    F --> H[Schema & Validation Check]
+    G --> H
+    H -- Missing fields --> I[Retry once with error feedback]
+    I --> H
+    H -- Valid structure --> J[Automated Link Checker]
+    J --> K[Remove dead links or 404s]
+    K --> L[Render final guide with confidence labels and AI banner]
 ```
 
-### 2. Configure Environment Variables
-Copy the example environment file:
-```bash
-cp .env.example .env.local
-```
+## What an agent can do and what you must do
+The agent reads documentation and writes the guide. It cannot create your app, accept the provider's terms, record your demo video, or pass a review. Those are for the developer, and each guide lists them.
 
-Open `.env.local` and add your Gemini API key:
-```env
-GEMINI_API_KEY=your_actual_gemini_api_key_here
-```
+## Why these choices
+- Same format for every guide so apps are easy to compare.
+- Labels on each fact so developers know what to trust.
+- Link checking so sources are real.
+- A short summary at the top because developers want a fast answer.
+- A Verification Log that shows what I corrected.
 
-> **Security Note:** Secrets are strictly loaded from environment variables. `.env*` files are excluded in `.gitignore` and never committed to the repository.
+## What I tested and what I only read
+- Tested myself: I created a Google OAuth app in testing mode and set up basic scopes (31 October).
+- Live generation: I searched Asana, a nonsense name, a calculator app, and a website address. The nonsense name said no documentation exists. The calculator app said it does not need OAuth registration. The website address gave the same Asana guide. My free Gemini quota ran out during testing, so the Asana guide was written without search and marked unverified, which is how the fallback is designed to work. [Add after tomorrow's retest: Once the quota reset, Asana gave a guide with real source links.]
+- Shared links and phone: I opened a guide link in a private window and it loaded. The site looks fine on my phone.
+- Source links: I clicked every link in the Notion, Slack and GitHub guides (14 unique links in total) and found 0 dead links.
+- Everything else I only read in the official documentation. The Verification Log says which is which.
 
-### 3. Run the Development Server
-```bash
-npm run dev
-```
+## What the agent got wrong and what I changed
+- Slack: the first guide said public distribution needs App Directory review. Slack's documentation says only a Marketplace listing needs review. I corrected it.
+- Google: the first guide mixed up sensitive and restricted scopes and had numbers with no source, "2 to 6 weeks" and "$3,000 audits". I separated the two types and relabelled or removed those numbers.
+- The first guides used wording like "tested" and "manually verified" that was not true. I removed it.
+I found these by reading the guides against the official docs, with help from Claude as a reviewer.
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+## Limitations
+- Labels are assigned by AI, and a working link does not prove a claim is right.
+- Only 7 guides are pre checked. 4 others were generated live and are not checked.
+- Generated guides are stored in temporary storage, so a shared link can stop working.
+- The free Gemini quota is small and resets daily at midnight Pacific Time. When it runs out, guides are written without search and marked unverified.
+- I did not create apps or go through approval for Slack, Notion, Linear or Stripe. I did not test Google beyond basic scopes.
+- The guides can go out of date because providers change rules.
 
-### 4. Build for Production
-```bash
-npm run build
-npm start
-```
+## Tools used
+Claude for planning and reviewing, Antigravity for building, Wispr Flow for dictation, Gemini inside the app.
 
----
+## Disclosure
+I built this for a Composio assignment. Composio sells managed OAuth, so I have tried to keep the guides neutral.
 
-## ☁️ Deploying to Vercel
-
-1. Push this repository to GitHub or GitLab.
-2. In the [Vercel Dashboard](https://vercel.com/new), click **Add New Project** and select this repository.
-3. In **Project Settings** > **Environment Variables**, add:
-   * **Key:** `GEMINI_API_KEY`
-   * **Value:** `your_gemini_api_key_here`
-4. Click **Deploy**. Vercel will build and serve the App Router application immediately.
-
----
-
-## 🛠️ Tools & Stack Used
-
-* **Framework:** [Next.js 14](https://nextjs.org/) (App Router, Server Components & Route Handlers)
-* **Language:** [TypeScript](https://www.typescriptlang.org/) (Strict schema-first typing)
-* **AI Research Engine:** Google Gemini API (`gemini-flash-lite-latest`) with native **Google Search Grounding**
-* **Icons:** [Lucide React](https://lucide.dev/) (Lightweight, accessible tree-shakeable icons)
-* **Styling:** Custom CSS with CSS variables and print-optimized stylesheets (`@media print`)
-
----
-
-## 🏛️ Key Architectural Decisions
-
-1. **Schema-First Canonical Structure:**
-   Every guide (whether manually curated or generated via AI) validates against an explicit JSON schema and TypeScript interface ([`src/types/guide.ts`](src/types/guide.ts)). This guarantees that essential dimensions, such as difficulty rating, setup vs. approval wait timeline, blockers, agent boundaries, and confidence levels, are always present.
-
-2. **Grounding with Google Search & 429 Quota Fallback:**
-   Rather than relying purely on pre-trained parametric memory (which hallucinates outdated review policies), the live research agent (`POST /api/generate`) utilizes Google Search grounding to retrieve real developer documentation. Source URLs are extracted directly from grounding chunks to prevent URL hallucination.
-   * **Graceful 429 Handling:** When free-tier Gemini API keys hit rate limits (`HTTP 429 RESOURCE_EXHAUSTED`) on the Google Search tool, the engine automatically catches the error and retries the prompt without the search tool.
-   * **Strict Fallback Auditing (`groundedWithSearch: false`):** When retrying without search grounding, the guide sets `groundedWithSearch: false`. In this scenario, every field confidence label (difficulty, setup time, approval wait, requirements, steps, blockers, and claims) is forcibly downgraded to `'Unverified estimate'`, any claims marked `'From official docs'` are purged, and a prominent warning banner is displayed at the top of the guide:
-     > *"Generated without web search. Treat everything on this page as unverified."*
-
-3. **Two-Tier Resilient Storage (Vercel Ready):**
-   Standard guides are bundled directly in `/data/guides/` as JSON. In serverless environments like Vercel (where the project directory is read-only at runtime), newly generated guides automatically write to `/tmp/guides/` and are held in an in-memory cache, ensuring the application never crashes with `EROFS` errors.
-
-4. **1-Shot Error Feedback Loop:**
-   If a model output fails schema validation on the first attempt, the specific validation errors are dynamically fed back into the prompt for an automated single retry before throwing an error.
-
-5. **Print & PDF-Friendly Layouts:**
-   Every guide includes dedicated `@media print` rules that hide navigation and chrome, prevent card splitting across page breaks, and format URLs into readable footnote citations for easy distribution to compliance and legal teams.
-
----
-
-## ⚠️ Limitations
-
-* **Provider Policy Drift:** Third-party developer portals change their submission procedures, review criteria, and pricing tiers frequently. While the verification confidence labels (`verified`, `from official docs`, `unverified`) reflect the state at `lastChecked`, production teams must always verify with live provider docs.
-* **Agent Automation Boundaries:** AI agents can draft manifests, construct PKCE challenge parameters, and write justification narratives, but they cannot solve CAPTCHAs, pass 2FA SMS challenges, accept legal agreements, or pay third-party security lab audit fees on behalf of developers.
-* **Serverless Ephemeral Storage:** On Vercel, dynamically generated guides saved to `/tmp` and memory persist for the lifetime of the warm lambda container. In high-traffic production, persisting dynamic guides permanently across global serverless edges would require an external store like Vercel KV, Redis, or PostgreSQL.
-* **Free-Tier Search Quotas & Automatic Fallback:** Free-tier Gemini keys have strict request-per-minute and daily caps for Google Search grounding. When the search quota is exceeded (HTTP 429), the research engine falls back to direct model knowledge, sets `groundedWithSearch: false`, strips "From official docs" claims, demotes all field confidence ratings to "Unverified estimate", and displays a prominent warning banner.
-
----
-
-## 🐛 Known Bugs & Quirks (Honest Assessment)
-
-1. **Vercel Cache Lifetime on Cold Starts:**
-   Newly generated guides created by one user in a serverless lambda are stored in `/tmp` and memory. When Vercel spins down or relocates the lambda instance, those dynamically researched guides will be regenerated on the next request unless they were committed to the `/data/guides` repository folder.
-2. **Google Search Tool Rate Limits (HTTP 429):**
-   If a user submits multiple live research requests in quick succession on a standard free-tier Gemini API key, Google Search grounding triggers a `429 RESOURCE_EXHAUSTED` status. The agent automatically retries without search, tags the guide with `groundedWithSearch: false`, purges claims marked "From official docs", demotes all confidence ratings to "Unverified estimate", and renders the alert banner: *"Generated without web search. Treat everything on this page as unverified."*
-3. **Multi-page Safari Print Scaling:**
-   When printing long guides to PDF in Safari on macOS, Safari may occasionally break long code blocks or blocker cards across two pages awkwardly. Firefox and Chromium render the `@media print` page-break rules cleanly.
-4. **Dynamic Slug Collisions:**
-   If a user researches a generic or punctuated query (e.g. `Google (sensitive)` vs `Google`), slugs are normalized to kebab-case (`google-sensitive`). If two queries resolve to identical normalized slugs, the cache will treat them as the same application.
+## Time spent and what I cut
+About two days: day one learning and building, day two testing and fixing. I did not build 100 guides, accounts for every provider, or user logins.
