@@ -127,7 +127,7 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
   return (
     <div>
       {/* Search Input Bar */}
-      <div className="search-container" style={{ margin: '2rem 0 1.25rem 0' }}>
+      <div className="search-container" style={{ margin: '1.5rem 0 1.25rem 0' }}>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -135,24 +135,11 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
               handleStartResearch(query);
             }
           }}
-          style={{
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            boxShadow: 'var(--shadow-md)',
-            borderRadius: '10px',
-            backgroundColor: 'var(--bg-surface)',
-            border: '1px solid var(--border-strong)',
-          }}
+          className="search-form"
         >
           <Search
             size={20}
-            style={{
-              position: 'absolute',
-              left: '1.1rem',
-              color: 'var(--text-muted)',
-              pointerEvents: 'none',
-            }}
+            className="search-icon"
           />
           <input
             type="text"
@@ -163,27 +150,10 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
               setErrorMessage(null);
             }}
             placeholder="Look up an app or paste its website (e.g. Slack, GitHub, Linear, Stripe)..."
-            style={{
-              width: '100%',
-              padding: '1.1rem 7.5rem 1.1rem 3.25rem',
-              fontSize: '1.05rem',
-              border: 'none',
-              outline: 'none',
-              borderRadius: '10px',
-              backgroundColor: 'transparent',
-              color: 'var(--text-primary)',
-            }}
+            className="search-input"
           />
 
-          <div
-            style={{
-              position: 'absolute',
-              right: '0.6rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-            }}
-          >
+          <div className="search-actions">
             {query && !isResearching && (
               <button
                 type="button"
@@ -331,14 +301,7 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
       )}
 
       {/* Guide Cards Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))',
-          gap: '1.25rem',
-          marginTop: '1.5rem',
-        }}
-      >
+      <div className="guides-grid">
         {filteredGuides.map((guide) => {
           const guideSlug = guide.slug || guide.appName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
@@ -346,17 +309,7 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
             <Link
               key={guide.appName}
               href={`/guide/${guideSlug}`}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                padding: '1.5rem',
-                backgroundColor: 'var(--bg-surface)',
-                border: '1px solid var(--border-light)',
-                borderRadius: '10px',
-                boxShadow: 'var(--shadow-sm)',
-                transition: 'all 0.2s ease',
-              }}
+              className="guide-card"
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = 'var(--primary)';
                 e.currentTarget.style.transform = 'translateY(-2px)';
@@ -475,16 +428,11 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
         {query.trim().length > 0 && !exactMatchExists && !isResearching && (
           <div
             onClick={() => handleStartResearch(query)}
+            className="guide-card"
             style={{
-              padding: '1.5rem',
               backgroundColor: '#faf5ff',
               border: '2px dashed #c084fc',
-              borderRadius: '10px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = '#f3e8ff';

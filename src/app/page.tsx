@@ -31,8 +31,8 @@ export default function HomePage() {
         </div>
 
         <h1
+          className="hero-title"
           style={{
-            fontSize: '2.5rem',
             fontWeight: 800,
             lineHeight: 1.18,
             letterSpacing: '-0.03em',
@@ -57,18 +57,7 @@ export default function HomePage() {
         </p>
 
         {/* Quick Problem Callout Card */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '1rem',
-            padding: '1.25rem',
-            backgroundColor: 'var(--bg-surface)',
-            border: '1px solid var(--border-light)',
-            borderRadius: '8px',
-            marginBottom: '2rem',
-          }}
-        >
+        <div className="hero-callouts-grid">
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
             <div
               style={{
@@ -153,6 +142,8 @@ export default function HomePage() {
             borderBottom: '1px solid var(--border-light)',
             paddingBottom: '0.75rem',
             marginBottom: '0.5rem',
+            flexWrap: 'wrap',
+            gap: '0.5rem',
           }}
         >
           <h2 style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.01em' }}>

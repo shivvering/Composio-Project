@@ -187,8 +187,144 @@ export function VerificationTable({ initialEntries }: VerificationTableProps) {
         </button>
       </div>
 
-      {/* Verification Log Table */}
+      {/* Mobile Card-Based View (for mobile screens) */}
+      <div className="verification-mobile-cards">
+        {filteredEntries.map((entry, idx) => (
+          <div
+            key={idx}
+            style={{
+              padding: '1.15rem',
+              backgroundColor: 'var(--bg-surface)',
+              border: '1px solid var(--border-light)',
+              borderRadius: '10px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.75rem',
+              boxShadow: 'var(--shadow-sm)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                gap: '0.5rem',
+                flexWrap: 'wrap',
+                borderBottom: '1px solid var(--border-light)',
+                paddingBottom: '0.65rem',
+              }}
+            >
+              <span style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
+                {entry.guideSlug ? (
+                  <Link href={`/guide/${entry.guideSlug}`} style={{ color: 'var(--primary)' }}>
+                    {entry.guide}
+                  </Link>
+                ) : (
+                  entry.guide
+                )}
+              </span>
+              <div>{getStatusBadge(entry.status)}</div>
+            </div>
+
+            <div>
+              <div
+                style={{
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                  letterSpacing: '0.04em',
+                  marginBottom: '0.2rem',
+                }}
+              >
+                Claim
+              </div>
+              <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', lineHeight: 1.5 }}>
+                {entry.claim}
+              </div>
+            </div>
+
+            <div>
+              <div
+                style={{
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  color: 'var(--text-muted)',
+                  letterSpacing: '0.04em',
+                  marginBottom: '0.2rem',
+                }}
+              >
+                Source
+              </div>
+              <div>
+                {entry.source ? (
+                  (entry.sourceUrl || entry.source.startsWith('http')) ? (
+                    <a
+                      href={entry.sourceUrl || entry.source}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{
+                        color: 'var(--primary)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        fontWeight: 500,
+                        fontSize: '0.85rem',
+                        wordBreak: 'break-word',
+                      }}
+                    >
+                      <span>{entry.source}</span>
+                      <ExternalLink size={13} style={{ flexShrink: 0 }} />
+                    </a>
+                  ) : (
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{entry.source}</span>
+                  )
+                ) : (
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>—</span>
+                )}
+              </div>
+            </div>
+
+            {entry.notes && (
+              <div
+                style={{
+                  backgroundColor: 'var(--bg-subtle)',
+                  padding: '0.65rem 0.85rem',
+                  borderRadius: '6px',
+                  fontSize: '0.85rem',
+                  color: 'var(--text-secondary)',
+                  lineHeight: 1.5,
+                  border: '1px solid var(--border-light)',
+                  marginTop: '0.15rem',
+                }}
+              >
+                <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Notes: </span>
+                {entry.notes}
+              </div>
+            )}
+          </div>
+        ))}
+
+        {filteredEntries.length === 0 && (
+          <div
+            style={{
+              padding: '2.5rem',
+              textAlign: 'center',
+              backgroundColor: 'var(--bg-surface)',
+              borderRadius: '8px',
+              border: '1px solid var(--border-light)',
+              color: 'var(--text-muted)',
+            }}
+          >
+            No verification records found matching this status filter.
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Table View (for tablets and desktop screens) */}
       <div
+        className="verification-desktop-table"
         style={{
           overflowX: 'auto',
           backgroundColor: 'var(--bg-surface)',

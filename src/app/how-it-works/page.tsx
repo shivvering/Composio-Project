@@ -41,8 +41,8 @@ export default function HowItWorksPage() {
         </div>
 
         <h1
+          className="page-title"
           style={{
-            fontSize: '2.4rem',
             fontWeight: 800,
             letterSpacing: '-0.025em',
             marginBottom: '1rem',

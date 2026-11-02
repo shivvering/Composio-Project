@@ -57,8 +57,8 @@ export default function VerificationLogPage() {
         </div>
 
         <h1
+          className="page-title"
           style={{
-            fontSize: '2.3rem',
             fontWeight: 800,
             letterSpacing: '-0.025em',
             marginBottom: '0.75rem',

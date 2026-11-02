@@ -129,6 +129,8 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
           justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: '1.5rem',
+          flexWrap: 'wrap',
+          gap: '0.75rem',
         }}
       >
         <Link
@@ -146,7 +148,7 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
           <span>Back to Guides</span>
         </Link>
 
-        <div style={{ display: 'flex', gap: '0.6rem' }}>
+        <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
           <CopyLinkButton />
           <PrintButton />
         </div>
@@ -229,11 +231,11 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
 
       {/* Guide Header Banner */}
       <header
+        className="guide-header-card"
         style={{
           backgroundColor: 'var(--bg-surface)',
           border: '1px solid var(--border-light)',
           borderRadius: '12px',
-          padding: '1.75rem',
           boxShadow: 'var(--shadow-sm)',
         }}
       >
@@ -249,8 +251,8 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
               <h1
+                className="guide-title"
                 style={{
-                  fontSize: '2.1rem',
                   fontWeight: 800,
                   letterSpacing: '-0.025em',
                   color: 'var(--text-primary)',
