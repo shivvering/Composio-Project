@@ -212,7 +212,7 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
               ? `Checked on ${guide.lastVerified || guide.lastChecked}:`
               : `Generated on ${guide.lastChecked}:`}
           </strong>{' '}
-          Provider OAuth rules and review policies change frequently — always verify current submission requirements with the{' '}
+          Provider OAuth rules and review policies change frequently. Always verify current submission requirements with the{' '}
           <a
             href={guide.website}
             target="_blank"

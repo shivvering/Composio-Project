@@ -74,7 +74,7 @@ npm start
 ## 🏛️ Key Architectural Decisions
 
 1. **Schema-First Canonical Structure:**
-   Every guide (whether manually curated or generated via AI) validates against an explicit JSON schema and TypeScript interface ([`src/types/guide.ts`](src/types/guide.ts)). This guarantees that essential dimensions—such as difficulty rating, setup vs. approval wait timeline, blockers, agent boundaries, and confidence levels—are always present.
+   Every guide (whether manually curated or generated via AI) validates against an explicit JSON schema and TypeScript interface ([`src/types/guide.ts`](src/types/guide.ts)). This guarantees that essential dimensions, such as difficulty rating, setup vs. approval wait timeline, blockers, agent boundaries, and confidence levels, are always present.
 
 2. **Grounding with Google Search & 429 Quota Fallback:**
    Rather than relying purely on pre-trained parametric memory (which hallucinates outdated review policies), the live research agent (`POST /api/generate`) utilizes Google Search grounding to retrieve real developer documentation. Source URLs are extracted directly from grounding chunks to prevent URL hallucination.

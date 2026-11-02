@@ -51,7 +51,7 @@
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
     },
     {
-      "text": "Reported by third parties, not on Google's pages. Check with the assessor.",
+      "text": "The name 'Tier 2' and assessor fees are reported by third parties, not on Google's pages. Check with the assessor.",
       "confidence": "Community reported"
     },
     {
@@ -107,7 +107,7 @@
     {
       "stepNumber": 6,
       "title": "Submit Restricted Scopes: Annual Assessment",
-      "description": "Part 2 (Restricted scopes, such as full Gmail access): Verification plus an annual assessment by a Google approved assessor, repeated at least every 12 months. Restricted scopes usually take several weeks in total (Estimate). Sensitive scopes: up to about 10 days (From official docs). Restricted scopes: several weeks plus assessor time (Estimate, not from Google). Reported by third parties, not on Google's pages. Check with the assessor.",
+      "description": "Part 2 (Restricted scopes, such as full Gmail access): Verification plus an annual assessment by a Google approved assessor, repeated at least every 12 months. Restricted scopes usually take several weeks in total (Estimate). Sensitive scopes: up to about 10 days (From official docs). Restricted scopes: several weeks plus assessor time (Estimate, not from Google). The name 'Tier 2' and assessor fees are reported by third parties, not on Google's pages. Check with the assessor.",
       "actionUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
       "confidence": "From official docs",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
@@ -134,7 +134,7 @@
     },
     {
       "problem": "Restricted scopes requirement: annual assessment by a Google approved assessor, repeated at least every 12 months",
-      "solution": "Restricted scopes (such as full Gmail access) require all sensitive scope criteria plus an annual assessment by a Google approved assessor, repeated at least every 12 months. Restricted scopes usually take several weeks in total (Estimate). Sensitive scopes: up to about 10 days (From official docs). Restricted scopes: several weeks plus assessor time (Estimate, not from Google). Reported by third parties, not on Google's pages. Check with the assessor. Sensitive scopes: verification review, no security assessment, review can take up to about 10 days.",
+      "solution": "Restricted scopes (such as full Gmail access) require all sensitive scope criteria plus an annual assessment by a Google approved assessor, repeated at least every 12 months. Restricted scopes usually take several weeks in total (Estimate). Sensitive scopes: up to about 10 days (From official docs). Restricted scopes: several weeks plus assessor time (Estimate, not from Google). The name 'Tier 2' and assessor fees are reported by third parties, not on Google's pages. Check with the assessor. Sensitive scopes: verification review, no security assessment, review can take up to about 10 days.",
       "confidence": "From official docs",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
     }
@@ -193,7 +193,7 @@
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
     },
     {
-      "claim": "Reported by third parties, not on Google's pages. Check with the assessor.",
+      "claim": "The name 'Tier 2' and assessor fees are reported by third parties, not on Google's pages. Check with the assessor.",
       "confidence": "Community reported"
     },
     {
