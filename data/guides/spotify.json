@@ -1,0 +1,100 @@
+{
+  "appName": "Spotify",
+  "website": "https://developer.spotify.com",
+  "lastChecked": "2026-11-02",
+  "manuallyChecked": false,
+  "difficulty": {
+    "level": "easy",
+    "reason": "Creating a Spotify app client ID and secret takes only a few clicks via the Spotify Developer Dashboard.",
+    "confidence": "Unverified estimate",
+    "sourceUrl": "https://developer.spotify.com/documentation/web-api/concepts/apps"
+  },
+  "timeEstimate": {
+    "setupTime": "Not stated in sources",
+    "setupTimeConfidence": "Unverified estimate",
+    "approvalWait": "Instant",
+    "approvalWaitConfidence": "Unverified estimate",
+    "approvalWaitSourceUrl": "https://developer.spotify.com/documentation/web-api/concepts/apps",
+    "notes": "App creation and client credentials generation are immediate, but extended quota or quota extensions may require review."
+  },
+  "requirements": [
+    {
+      "text": "A Spotify user account to log in to the Spotify Developer Dashboard.",
+      "confidence": "Unverified estimate",
+      "sourceUrl": "https://developer.spotify.com/documentation/web-api/concepts/apps"
+    },
+    {
+      "text": "Acceptance of Spotify Developer Terms of Service.",
+      "confidence": "Unverified estimate",
+      "sourceUrl": "https://developer.spotify.com/documentation/web-api/concepts/apps"
+    }
+  ],
+  "steps": [
+    {
+      "stepNumber": 1,
+      "title": "Log in to Spotify Developer Dashboard",
+      "description": "Navigate to the Spotify Developer Dashboard and log in with your Spotify account.",
+      "confidence": "Unverified estimate",
+      "sourceUrl": "https://developer.spotify.com/documentation/web-api/concepts/apps",
+      "actionUrl": "https://developer.spotify.com/dashboard"
+    },
+    {
+      "stepNumber": 2,
+      "title": "Create an App",
+      "description": "Click on 'Create app', fill in the app name, description, and redirect URIs.",
+      "confidence": "Unverified estimate",
+      "sourceUrl": "https://developer.spotify.com/documentation/web-api/concepts/apps"
+    },
+    {
+      "stepNumber": 3,
+      "title": "Retrieve Credentials",
+      "description": "Copy your Client ID and Client Secret for use in your application's OAuth flow.",
+      "confidence": "Unverified estimate",
+      "sourceUrl": "https://developer.spotify.com/documentation/web-api/concepts/apps"
+    }
+  ],
+  "blockers": [
+    {
+      "problem": "App is in Development Mode and users cannot log in.",
+      "solution": "Add the specific user's email address to the Users and Access section of the Spotify Developer Dashboard while in development mode, or request quota extension.",
+      "confidence": "Unverified estimate",
+      "sourceUrl": "https://developer.spotify.com/documentation/web-api/concepts/quota-modes"
+    }
+  ],
+  "agentVsDeveloper": {
+    "agentCanDo": [
+      "Perform requests using obtained OAuth tokens",
+      "Interact with user playlists, playback state, and library once authenticated"
+    ],
+    "developerMustDo": [
+      "Register the app in the Spotify Developer Dashboard",
+      "Configure redirect URIs",
+      "Handle user consent flows and manage client secrets"
+    ]
+  },
+  "managedOption": {
+    "managedSufficientWhen": "Managed OAuth is sufficient when you want to abstract away user token exchange and credential storage for standard integrations. This tool was built for a Composio assignment, and Composio sells managed OAuth.",
+    "customRequiredWhen": "Custom developer credentials are required when you need direct, unshared control over the app branding, custom scopes, or proprietary rate limits."
+  },
+  "sources": [
+    {
+      "title": "Spotify Developer Dashboard Guide",
+      "url": "https://developer.spotify.com/documentation/web-api/concepts/apps"
+    },
+    {
+      "title": "Spotify Quota Modes",
+      "url": "https://developer.spotify.com/documentation/web-api/concepts/quota-modes"
+    }
+  ],
+  "claims": [
+    {
+      "claim": "Spotify OAuth app registration workflow and permission configuration.",
+      "confidence": "Unverified estimate"
+    }
+  ],
+  "openQuestions": [
+    "What is the exact automated review process timeline if an app applies for extended quota limits?"
+  ],
+  "slug": "spotify",
+  "groundedWithSearch": false
+}

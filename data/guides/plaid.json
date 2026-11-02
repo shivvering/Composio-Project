@@ -1,0 +1,86 @@
+{
+  "appName": "Plaid",
+  "website": "https://plaid.com",
+  "lastChecked": "2026-11-02",
+  "manuallyChecked": false,
+  "difficulty": {
+    "level": "medium",
+    "reason": "Setting up a Plaid account is straightforward for development, but requires transitioning through environments (Sandbox to Development/Production) and complying with specific financial data regulations and security reviews.",
+    "confidence": "Unverified estimate"
+  },
+  "timeEstimate": {
+    "setupTime": "Not stated in sources",
+    "setupTimeConfidence": "Unverified estimate",
+    "approvalWait": "Not stated in sources",
+    "approvalWaitConfidence": "Unverified estimate",
+    "notes": "Plaid allows instant access to the Sandbox environment upon signing up, but Production access requires agreement acceptance and often compliance or credential verification."
+  },
+  "requirements": [
+    {
+      "text": "A valid email address to register a Plaid account.",
+      "confidence": "Unverified estimate",
+      "sourceUrl": "https://plaid.com/docs/quickstart/"
+    }
+  ],
+  "steps": [
+    {
+      "stepNumber": 1,
+      "title": "Create a Plaid Account",
+      "description": "Sign up for a developer account on the Plaid dashboard.",
+      "confidence": "Unverified estimate",
+      "sourceUrl": "https://plaid.com/docs/quickstart/"
+    },
+    {
+      "stepNumber": 2,
+      "title": "Access the Sandbox Environment",
+      "description": "Upon sign up, API keys for the Sandbox environment are immediately available for testing with mock financial data.",
+      "confidence": "Unverified estimate",
+      "sourceUrl": "https://plaid.com/docs/quickstart/"
+    }
+  ],
+  "blockers": [
+    {
+      "problem": "Moving from Sandbox/Development to Production requires additional approvals and agreement to Plaid's production terms.",
+      "solution": "Submit the required business information and complete the production request workflow via the Plaid Dashboard.",
+      "confidence": "Unverified estimate",
+      "sourceUrl": "https://plaid.com/docs/account/"
+    }
+  ],
+  "agentVsDeveloper": {
+    "agentCanDo": [
+      "Initiate the Plaid Link flow once tokens are established",
+      "Fetch financial data using valid access tokens"
+    ],
+    "developerMustDo": [
+      "Sign up for a Plaid developer account",
+      "Obtain API keys (client_id and secrets)",
+      "Configure redirect URIs and webhook URLs in the Plaid dashboard"
+    ]
+  },
+  "managedOption": {
+    "managedSufficientWhen": "Managed OAuth solutions like Composio are sufficient when you want to abstract away the direct management of Plaid Link tokens and API credentials for quick prototyping or integration within an agentic framework. This tool was built for a Composio assignment, and Composio sells managed OAuth.",
+    "customRequiredWhen": "Custom developer credentials are required when your application needs direct access to raw Plaid API keys, custom webhook receivers, or specialized financial data pipelines outside of standard managed scopes."
+  },
+  "sources": [
+    {
+      "title": "Plaid Quickstart Documentation",
+      "url": "https://plaid.com/docs/quickstart/"
+    },
+    {
+      "title": "Plaid Account & Dashboard Documentation",
+      "url": "https://plaid.com/docs/account/"
+    }
+  ],
+  "claims": [
+    {
+      "claim": "Plaid OAuth app registration workflow and permission configuration.",
+      "confidence": "Unverified estimate"
+    }
+  ],
+  "openQuestions": [
+    "What is the exact average approval wait time for Production access on Plaid?",
+    "Are there specific compliance certifications required for all Production tier applications?"
+  ],
+  "slug": "plaid",
+  "groundedWithSearch": false
+}

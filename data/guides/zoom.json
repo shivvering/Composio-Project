@@ -1,0 +1,89 @@
+{
+  "appName": "Zoom",
+  "website": "https://marketplace.zoom.us/",
+  "lastChecked": "2026-11-02",
+  "manuallyChecked": false,
+  "difficulty": {
+    "level": "medium",
+    "reason": "App registration is straightforward, but App Review for public publication requires comprehensive documentation, privacy policy URLs, and potential security assessments.",
+    "confidence": "Unverified estimate"
+  },
+  "timeEstimate": {
+    "setupTime": "Not stated in sources",
+    "setupTimeConfidence": "Unverified estimate",
+    "approvalWait": "3-10 business days",
+    "approvalWaitConfidence": "Unverified estimate",
+    "notes": "Review times vary based on the app type and complexity of the integration."
+  },
+  "requirements": [
+    {
+      "text": "A verified Zoom account.",
+      "confidence": "Unverified estimate"
+    },
+    {
+      "text": "Privacy Policy URL and Terms of Use URL.",
+      "confidence": "Unverified estimate"
+    },
+    {
+      "text": "Functional OAuth 2.0 implementation with redirect URIs configured.",
+      "confidence": "Unverified estimate"
+    }
+  ],
+  "steps": [
+    {
+      "stepNumber": 1,
+      "title": "Create an App on Zoom Marketplace",
+      "description": "Log into the Zoom App Marketplace and select 'Develop' > 'Build App' to choose an app type (OAuth).",
+      "confidence": "Unverified estimate",
+      "actionUrl": "https://marketplace.zoom.us/"
+    },
+    {
+      "stepNumber": 2,
+      "title": "Configure Scopes and Redirect URIs",
+      "description": "Add the necessary Scopes (permissions) for your AI agent and set the Redirect URI for the OAuth flow.",
+      "confidence": "Unverified estimate"
+    },
+    {
+      "stepNumber": 3,
+      "title": "Submit for App Review",
+      "description": "If publishing for public use, submit the app for review including demo credentials and test instructions.",
+      "confidence": "Unverified estimate"
+    }
+  ],
+  "blockers": [
+    {
+      "problem": "App Review rejection due to missing information.",
+      "solution": "Ensure all required URLs (Privacy/Terms) are public and the demo credentials provided are functional.",
+      "confidence": "Unverified estimate"
+    }
+  ],
+  "agentVsDeveloper": {
+    "agentCanDo": [
+      "Request authorization via OAuth 2.0",
+      "Perform API actions based on granted scopes"
+    ],
+    "developerMustDo": [
+      "Manage client secrets",
+      "Handle token refresh logic",
+      "Submit app for official Marketplace review",
+      "Maintain compliance with Zoom's API terms"
+    ]
+  },
+  "managedOption": {
+    "managedSufficientWhen": "Managed OAuth is sufficient for internal testing or prototyping where you do not need to distribute the app publicly on the Marketplace. Note: This tool was built for a Composio assignment, and Composio sells managed OAuth.",
+    "customRequiredWhen": "Custom credentials are required if you need to build a public-facing application that integrates with other users' Zoom accounts. This tool was built for a Composio assignment, and Composio sells managed OAuth."
+  },
+  "sources": [],
+  "claims": [
+    {
+      "claim": "Zoom OAuth app registration workflow and permission configuration.",
+      "confidence": "Unverified estimate"
+    }
+  ],
+  "openQuestions": [
+    "What is the average duration for a 'complex' app review vs a simple one?",
+    "Are there specific restrictions on AI agents using Zoom OAuth scopes beyond the standard API usage?"
+  ],
+  "slug": "zoom",
+  "groundedWithSearch": false
+}

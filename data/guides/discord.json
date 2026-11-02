@@ -1,0 +1,90 @@
+{
+  "appName": "Discord",
+  "website": "https://discord.com/developers",
+  "lastChecked": "2026-11-02",
+  "manuallyChecked": false,
+  "difficulty": {
+    "level": "medium",
+    "reason": "Creating an application and setting up OAuth2 redirect URIs and scopes is straightforward, but verification processes and bot approval requirements depend on scale and intents.",
+    "confidence": "Unverified estimate",
+    "sourceUrl": "https://discord.com/developers/docs/topics/oauth2"
+  },
+  "timeEstimate": {
+    "setupTime": "Not stated in sources",
+    "setupTimeConfidence": "Unverified estimate",
+    "approvalWait": "Not stated in sources",
+    "approvalWaitConfidence": "Unverified estimate",
+    "notes": "Exact setup and approval durations are not formally published in Discord developer documentation."
+  },
+  "requirements": [
+    {
+      "text": "A valid Discord user account.",
+      "confidence": "Unverified estimate"
+    },
+    {
+      "text": "Access to the Discord Developer Portal.",
+      "confidence": "Unverified estimate"
+    }
+  ],
+  "steps": [
+    {
+      "stepNumber": 1,
+      "title": "Navigate to Developer Portal",
+      "description": "Log into the Discord Developer Portal and click 'New Application'.",
+      "confidence": "Unverified estimate",
+      "actionUrl": "https://discord.com/developers/applications"
+    },
+    {
+      "stepNumber": 2,
+      "title": "Configure OAuth2 Settings",
+      "description": "Go to the OAuth2 tab within your application settings to find your Client ID and Client Secret, and add redirect URIs.",
+      "confidence": "Unverified estimate",
+      "sourceUrl": "https://discord.com/developers/docs/topics/oauth2"
+    }
+  ],
+  "blockers": [
+    {
+      "problem": "App verification required for bots in over 100 servers or requesting privileged intents.",
+      "solution": "Submit the application for verification through the Discord Developer Portal providing required identity information and use case details.",
+      "confidence": "Unverified estimate",
+      "sourceUrl": "https://discord.com/developers/docs/topics/oauth2"
+    }
+  ],
+  "agentVsDeveloper": {
+    "agentCanDo": [
+      "Interact with Discord APIs using valid user or bot tokens once authenticated.",
+      "Handle automated messaging and channel management based on granted scopes."
+    ],
+    "developerMustDo": [
+      "Create the application in the Discord Developer Portal.",
+      "Configure OAuth2 client credentials and redirect URLs.",
+      "Handle app verification and submit necessary compliance details if scaling."
+    ]
+  },
+  "managedOption": {
+    "managedSufficientWhen": "Managed OAuth (such as Composio) is sufficient when you want to delegate authentication, token management, and integration handling without manually implementing the Discord OAuth2 authorization code exchange flow. This tool was built for a Composio assignment, and Composio sells managed OAuth.",
+    "customRequiredWhen": "Custom developer credentials are required when you need direct ownership of the Discord application, custom branding in the OAuth consent screen, or specific privileged bot intents managed entirely within your own organization's developer account."
+  },
+  "sources": [
+    {
+      "title": "Discord Developer Documentation - OAuth2",
+      "url": "https://discord.com/developers/docs/topics/oauth2"
+    },
+    {
+      "title": "Discord Developer Portal Applications",
+      "url": "https://discord.com/developers/applications"
+    }
+  ],
+  "claims": [
+    {
+      "claim": "Discord OAuth app registration workflow and permission configuration.",
+      "confidence": "Unverified estimate"
+    }
+  ],
+  "openQuestions": [
+    "What is the exact average approval wait time for Discord app verification?",
+    "What are the precise automated rate limits for new OAuth application creations?"
+  ],
+  "slug": "discord",
+  "groundedWithSearch": false
+}

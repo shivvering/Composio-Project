@@ -50,7 +50,7 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
       setCurrentStepIndex((prev) =>
         prev < PROGRESS_STEPS.length - 1 ? prev + 1 : prev
       );
-    }, 4500);
+    }, 1200);
 
     return () => clearInterval(interval);
   }, [isResearching]);

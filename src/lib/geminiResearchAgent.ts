@@ -7,6 +7,12 @@ import { memoryGuides, getGuideBySlug } from '@/lib/guides';
 const GUIDES_DIR = path.join(process.cwd(), 'data', 'guides');
 const TMP_GUIDES_DIR = path.join('/tmp', 'guides');
 
+// In-memory cache for validated URLs to avoid redundant network round-trips
+const urlCheckCache = new Map<string, boolean>();
+
+// Temporary cooldown tracker for Google Search Grounding quota (429)
+let searchQuotaExhaustedUntil = 0;
+
 export function createSlug(appName: string): string {
   return appName
     .toLowerCase()
@@ -39,50 +45,72 @@ function extractJsonFromText(rawText: string): any {
 /**
  * Verifies that a URL returns a successful response (HTTP status < 400).
  * Removes dead links that 404, fail, or time out.
+ * Cached in-memory to prevent repeated checks on identical URLs.
  */
-async function isUrlSuccessful(urlStr?: string, timeoutMs: number = 3000): Promise<boolean> {
+async function isUrlSuccessful(urlStr?: string, timeoutMs: number = 1500): Promise<boolean> {
   if (!urlStr || typeof urlStr !== 'string') return false;
+  if (urlCheckCache.has(urlStr)) return urlCheckCache.get(urlStr)!;
+
   try {
     const parsed = new URL(urlStr);
-    if (!['http:', 'https:'].includes(parsed.protocol)) return false;
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      urlCheckCache.set(urlStr, false);
+      return false;
+    }
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
 
-    let res = await fetch(urlStr, {
-      method: 'HEAD',
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; OAuthPathValidator/1.0)' },
-      signal: controller.signal,
-      redirect: 'follow',
-    }).catch(async () => {
-      // Fallback to GET if HEAD method is blocked (405 Method Not Allowed)
-      return await fetch(urlStr, {
-        method: 'GET',
+    let res: Response | null = null;
+    try {
+      res = await fetch(urlStr, {
+        method: 'HEAD',
         headers: { 'User-Agent': 'Mozilla/5.0 (compatible; OAuthPathValidator/1.0)' },
         signal: controller.signal,
         redirect: 'follow',
       });
-    });
+    } catch (headErr) {
+      // Only attempt GET fallback if not already aborted by timeout
+      if (!controller.signal.aborted) {
+        try {
+          res = await fetch(urlStr, {
+            method: 'GET',
+            headers: { 'User-Agent': 'Mozilla/5.0 (compatible; OAuthPathValidator/1.0)' },
+            signal: controller.signal,
+            redirect: 'follow',
+          });
+        } catch {
+          res = null;
+        }
+      }
+    } finally {
+      clearTimeout(timer);
+    }
 
-    clearTimeout(timer);
     // 2xx, 3xx are successful. 403 can happen on bot-protected Cloudflare sites, but 404/5xx is dead.
-    return res.status < 400 || res.status === 403;
-  } catch (err) {
+    const isOk = res ? (res.status < 400 || res.status === 403) : false;
+    urlCheckCache.set(urlStr, isOk);
+    return isOk;
+  } catch {
+    urlCheckCache.set(urlStr, false);
     return false;
   }
 }
 
 /**
- * Calls Gemini API with Google Search Grounding enabled (with graceful fallback if search quota is exhausted).
+ * Calls Gemini API with Google Search Grounding enabled (with fast fallback if search quota is exhausted).
  */
 async function callGeminiWithSearch(
   prompt: string,
   apiKey: string,
-  modelName: string = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest',
-  timeoutMs: number = 45000,
+  modelName: string = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite',
+  timeoutMs: number = 30000,
   enableSearch: boolean = true
 ): Promise<{ data: any; groundedWithSearch: boolean }> {
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`;
+
+  // Skip search tool call if quota was exhausted within the last 60 seconds
+  const canUseSearch = enableSearch && Date.now() > searchQuotaExhaustedUntil;
 
   const payload: any = {
     contents: [
@@ -92,12 +120,17 @@ async function callGeminiWithSearch(
     ],
   };
 
-  if (enableSearch) {
+  if (canUseSearch) {
     payload.tools = [
       {
         google_search: {},
       },
     ];
+  } else {
+    // When operating without search grounding, request direct JSON generation for maximum speed
+    payload.generationConfig = {
+      responseMimeType: 'application/json',
+    };
   }
 
   const controller = new AbortController();
@@ -116,15 +149,16 @@ async function callGeminiWithSearch(
 
     clearTimeout(timer);
 
-    // If 404 on the specific model, try gemini-flash-latest
-    if (response.status === 404 && modelName !== 'gemini-flash-latest') {
-      console.warn(`Model ${modelName} returned 404, attempting gemini-flash-latest`);
-      return callGeminiWithSearch(prompt, apiKey, 'gemini-flash-latest', timeoutMs, enableSearch);
+    // If 404 or 503 on gemini-3.5-flash, fallback seamlessly to gemini-flash-lite-latest
+    if ((response.status === 404 || response.status === 503) && modelName !== 'gemini-flash-lite-latest') {
+      console.warn(`Model ${modelName} returned ${response.status}, attempting gemini-flash-lite-latest`);
+      return callGeminiWithSearch(prompt, apiKey, 'gemini-flash-lite-latest', timeoutMs, enableSearch);
     }
 
-    // If search grounding specifically threw a 429 quota exhaustion, retry once without search tool
-    if (response.status === 429 && enableSearch) {
+    // If search grounding specifically threw a 429 quota exhaustion, record cooldown and retry immediately without search
+    if (response.status === 429 && canUseSearch) {
       console.warn('Search grounding quota limit hit (429). Falling back to direct model knowledge.');
+      searchQuotaExhaustedUntil = Date.now() + 60 * 1000;
       return callGeminiWithSearch(prompt, apiKey, modelName, timeoutMs, false);
     }
 
@@ -135,7 +169,7 @@ async function callGeminiWithSearch(
     }
 
     const data = await response.json();
-    return { data, groundedWithSearch: enableSearch };
+    return { data, groundedWithSearch: canUseSearch };
   } catch (error: any) {
     clearTimeout(timer);
     if (error.name === 'AbortError') {
@@ -297,7 +331,7 @@ ${extraFeedback ? `\nPREVIOUS ATTEMPT FAILED WITH THESE ERRORS:\n${extraFeedback
 `;
 
   // 3. Execution
-  const primaryModel = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest';
+  const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
   let geminiResult = await callGeminiWithSearch(buildPrompt(), apiKey, primaryModel);
   let rawResponse = geminiResult.data;
   let isGrounded = geminiResult.groundedWithSearch;
@@ -424,59 +458,70 @@ ${extraFeedback ? `\nPREVIOUS ATTEMPT FAILED WITH THESE ERRORS:\n${extraFeedback
   }
 
   // 5. Check every URL returns a successful response; remove failing links
-  const verifiedSources: Array<{ title: string; url: string }> = [];
-  for (const src of finalGuide.sources) {
-    if (await isUrlSuccessful(src.url)) {
-      verifiedSources.push(src);
-    } else {
-      console.warn(`Removing unreachable source URL: ${src.url}`);
-    }
-  }
-  finalGuide.sources = verifiedSources;
-
-  // Clean URLs in steps
+  // Collect all unique URLs across the guide for concurrent validation
+  const allUrls = new Set<string>();
+  for (const src of finalGuide.sources) if (src?.url) allUrls.add(src.url);
   for (const step of finalGuide.steps) {
-    if (step.actionUrl) {
-      if (!(await isUrlSuccessful(step.actionUrl))) {
-        delete step.actionUrl;
-      }
+    if (step.actionUrl) allUrls.add(step.actionUrl);
+    if (step.sourceUrl) allUrls.add(step.sourceUrl);
+  }
+  for (const b of finalGuide.blockers) if (b.sourceUrl) allUrls.add(b.sourceUrl);
+  for (const r of finalGuide.requirements) {
+    if (typeof r === 'object' && r.sourceUrl) allUrls.add(r.sourceUrl);
+  }
+  if (finalGuide.difficulty.sourceUrl) allUrls.add(finalGuide.difficulty.sourceUrl);
+  if (finalGuide.timeEstimate.setupTimeSourceUrl) allUrls.add(finalGuide.timeEstimate.setupTimeSourceUrl);
+  if (finalGuide.timeEstimate.approvalWaitSourceUrl) allUrls.add(finalGuide.timeEstimate.approvalWaitSourceUrl);
+
+  // Validate all unique URLs concurrently in parallel (1.5s max total)
+  const urlStatusMap = new Map<string, boolean>();
+  await Promise.all(
+    Array.from(allUrls).map(async (url) => {
+      const ok = await isUrlSuccessful(url, 1500);
+      urlStatusMap.set(url, ok);
+    })
+  );
+
+  // Filter unreachable sources
+  finalGuide.sources = finalGuide.sources.filter((src) => urlStatusMap.get(src.url) !== false);
+
+  // Clean unreachable URLs in steps
+  for (const step of finalGuide.steps) {
+    if (step.actionUrl && urlStatusMap.get(step.actionUrl) === false) {
+      delete step.actionUrl;
     }
-    if (step.sourceUrl) {
-      if (!(await isUrlSuccessful(step.sourceUrl))) {
-        delete step.sourceUrl;
-      }
+    if (step.sourceUrl && urlStatusMap.get(step.sourceUrl) === false) {
+      delete step.sourceUrl;
     }
   }
 
-  // Clean URLs in blockers
+  // Clean unreachable URLs in blockers
   for (const b of finalGuide.blockers) {
-    if (b.sourceUrl && !(await isUrlSuccessful(b.sourceUrl))) {
+    if (b.sourceUrl && urlStatusMap.get(b.sourceUrl) === false) {
       delete b.sourceUrl;
     }
   }
 
-  // Clean URLs in requirements
+  // Clean unreachable URLs in requirements
   for (const r of finalGuide.requirements) {
-    if (typeof r === 'object' && r.sourceUrl) {
-      if (!(await isUrlSuccessful(r.sourceUrl))) {
-        delete r.sourceUrl;
-      }
+    if (typeof r === 'object' && r.sourceUrl && urlStatusMap.get(r.sourceUrl) === false) {
+      delete r.sourceUrl;
     }
   }
 
-  // Clean URLs in difficulty and timeEstimate
-  if (finalGuide.difficulty.sourceUrl && !(await isUrlSuccessful(finalGuide.difficulty.sourceUrl))) {
+  // Clean unreachable URLs in difficulty and timeEstimate
+  if (finalGuide.difficulty.sourceUrl && urlStatusMap.get(finalGuide.difficulty.sourceUrl) === false) {
     delete finalGuide.difficulty.sourceUrl;
   }
   if (
     finalGuide.timeEstimate.setupTimeSourceUrl &&
-    !(await isUrlSuccessful(finalGuide.timeEstimate.setupTimeSourceUrl))
+    urlStatusMap.get(finalGuide.timeEstimate.setupTimeSourceUrl) === false
   ) {
     delete finalGuide.timeEstimate.setupTimeSourceUrl;
   }
   if (
     finalGuide.timeEstimate.approvalWaitSourceUrl &&
-    !(await isUrlSuccessful(finalGuide.timeEstimate.approvalWaitSourceUrl))
+    urlStatusMap.get(finalGuide.timeEstimate.approvalWaitSourceUrl) === false
   ) {
     delete finalGuide.timeEstimate.approvalWaitSourceUrl;
   }
