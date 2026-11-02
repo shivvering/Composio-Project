@@ -2,6 +2,15 @@
   {
     "guide": "Slack",
     "guideSlug": "slack",
+    "claim": "Public distribution, so other workspaces can install the app, does not require Marketplace review. You complete the checklist in Manage Distribution and click Activate Public Distribution. Listing in the Slack Marketplace is separate, adds a review, and is recommended for commercial apps.",
+    "source": "https://docs.slack.dev/app-management/distribution/",
+    "sourceTitle": "Slack Docs: Distributing Slack Apps",
+    "status": "verified correct",
+    "notes": "Verified against official Slack documentation (https://docs.slack.dev/app-management/distribution/). Public distribution is self-serve; Marketplace review is only required for App Directory/Marketplace listing."
+  },
+  {
+    "guide": "Slack",
+    "guideSlug": "slack",
     "claim": "Apps do not need Slack review or approval to be installed on development or private workspaces.",
     "source": "https://api.slack.com/quickstart",
     "sourceTitle": "Slack API: Quickstart Guide",

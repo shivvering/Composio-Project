@@ -197,7 +197,11 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
         <Sparkles size={18} color="#7c3aed" style={{ flexShrink: 0, marginTop: '2px' }} />
         <div>
           <strong>
-            {params.slug?.toLowerCase() === 'google' || guide.slug === 'google' || guide.spotChecked
+            {guide.spotChecked ||
+            params.slug?.toLowerCase() === 'google' ||
+            guide.slug === 'google' ||
+            params.slug?.toLowerCase() === 'slack' ||
+            guide.slug === 'slack'
               ? `AI generated, spot checked on ${guide.lastVerified || guide.lastChecked}:`
               : guide.manuallyChecked
               ? `Manually Verified Guide (Last verified ${guide.lastVerified || guide.lastChecked}):`
@@ -294,7 +298,11 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
                 <Calendar size={14} />
                 <span>
-                  {params.slug?.toLowerCase() === 'google' || guide.slug === 'google' || guide.spotChecked
+                  {guide.spotChecked ||
+                  params.slug?.toLowerCase() === 'google' ||
+                  guide.slug === 'google' ||
+                  params.slug?.toLowerCase() === 'slack' ||
+                  guide.slug === 'slack'
                     ? `AI generated, spot checked on ${guide.lastVerified || guide.lastChecked}`
                     : guide.manuallyChecked
                     ? `Last verified: ${guide.lastVerified || guide.lastChecked}`
@@ -336,8 +344,15 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
                 <Clock size={15} color="var(--primary)" />
                 <span>Setup Time</span>
               </div>
-              <div className="at-a-glance-val">
-                {guide.timeEstimate.setupTime}
+              <div className="at-a-glance-val" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                <span>{guide.timeEstimate.setupTime}</span>
+                {guide.timeEstimate.setupTimeConfidence && !isOfficial(guide.timeEstimate.setupTimeConfidence) && (
+                  <ConfidenceBadge
+                    confidence={isUngrounded ? 'Unverified estimate' : guide.timeEstimate.setupTimeConfidence}
+                    sourceUrl={isUngrounded ? undefined : guide.timeEstimate.setupTimeSourceUrl}
+                    size="sm"
+                  />
+                )}
               </div>
               <p className="at-a-glance-desc">
                 Active engineering effort required to register the OAuth app, set redirect URLs, and obtain credentials.
@@ -350,8 +365,15 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
                 <Hourglass size={15} color="#d97706" />
                 <span>Approval Wait</span>
               </div>
-              <div className="at-a-glance-val">
-                {guide.timeEstimate.approvalWait}
+              <div className="at-a-glance-val" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                <span>{guide.timeEstimate.approvalWait}</span>
+                {guide.timeEstimate.approvalWaitConfidence && (
+                  <ConfidenceBadge
+                    confidence={isUngrounded ? 'Unverified estimate' : guide.timeEstimate.approvalWaitConfidence}
+                    sourceUrl={isUngrounded ? undefined : guide.timeEstimate.approvalWaitSourceUrl}
+                    size="sm"
+                  />
+                )}
               </div>
               <p className="at-a-glance-desc">
                 {guide.timeEstimate.notes || 'Turnaround duration before production scopes or public app authorizations are approved.'}

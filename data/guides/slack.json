@@ -1,23 +1,24 @@
 {
   "appName": "Slack",
   "website": "https://api.slack.com",
-  "lastChecked": "2026-10-31",
-  "manuallyChecked": true,
-  "lastVerified": "2026-10-31",
+  "lastChecked": "1 November 2026",
+  "manuallyChecked": false,
+  "spotChecked": true,
+  "lastVerified": "1 November 2026",
   "difficulty": {
     "level": "easy",
-    "reason": "Self-serve internal install with app manifests; review only required for the public Slack App Directory.",
+    "reason": "Self-serve internal install and public distribution; review only required if listing in the Slack Marketplace.",
     "confidence": "From official docs",
-    "sourceUrl": "https://api.slack.com/quickstart"
+    "sourceUrl": "https://docs.slack.dev/app-management/distribution/"
   },
   "timeEstimate": {
     "setupTime": "10 - 20 minutes",
     "setupTimeConfidence": "From official docs",
     "setupTimeSourceUrl": "https://api.slack.com/quickstart",
-    "approvalWait": "Instant for private workspaces; 2 - 4 weeks for public App Directory",
-    "approvalWaitConfidence": "From official docs",
-    "approvalWaitSourceUrl": "https://api.slack.com/authentication/oauth-v2",
-    "notes": "Developers can immediately install and test in development workspaces without waiting for Slack approval."
+    "approvalWait": "Instant for private & public distribution; 2 - 4 weeks for optional Slack Marketplace review",
+    "approvalWaitConfidence": "Unverified estimate",
+    "approvalWaitSourceUrl": "https://docs.slack.dev/app-management/distribution/",
+    "notes": "Public distribution does not require Marketplace review. Listing in the Slack Marketplace is separate, adds an estimated 2 to 4 week review, and is recommended for commercial apps."
   },
   "requirements": [
     {
@@ -33,12 +34,12 @@
     {
       "text": "Valid privacy policy URL (if distributing publicly)",
       "confidence": "From official docs",
-      "sourceUrl": "https://api.slack.com/legacy/start/distributing/guidelines"
+      "sourceUrl": "https://docs.slack.dev/app-management/distribution/"
     },
     {
       "text": "App icon (512x512 PNG) and short description",
       "confidence": "From official docs",
-      "sourceUrl": "https://api.slack.com/legacy/start/distributing/guidelines"
+      "sourceUrl": "https://docs.slack.dev/app-management/distribution/"
     }
   ],
   "steps": [
@@ -68,11 +69,11 @@
     },
     {
       "stepNumber": 4,
-      "title": "Activate Public Distribution (Optional)",
-      "description": "If external users will connect their own workspaces via OAuth, enable Public Distribution under 'Manage Distribution' and verify that all landing page URLs are live.",
+      "title": "Activate Public Distribution",
+      "description": "Public distribution, so other workspaces can install the app, does not require Marketplace review. You complete the checklist in Manage Distribution and click Activate Public Distribution. Listing in the Slack Marketplace is separate, adds a review, and is recommended for commercial apps.",
       "actionUrl": "https://api.slack.com/apps",
       "confidence": "From official docs",
-      "sourceUrl": "https://api.slack.com/legacy/start/distributing/guidelines"
+      "sourceUrl": "https://docs.slack.dev/app-management/distribution/"
     }
   ],
   "blockers": [
@@ -104,7 +105,7 @@
       "Log in to api.slack.com and create the application",
       "Authorize the installation in the target Slack workspace",
       "Copy Client ID and Client Secret into the environment variables (`.env`)",
-      "Submit for App Directory review if building a multi-tenant public product"
+      "Submit for Slack Marketplace review if choosing to list publicly in the Marketplace (optional)"
     ]
   },
   "managedOption": {
@@ -113,16 +114,16 @@
   },
   "sources": [
     {
+      "title": "Slack Docs: Distributing Slack Apps",
+      "url": "https://docs.slack.dev/app-management/distribution/"
+    },
+    {
       "title": "Slack API: Quickstart Guide",
       "url": "https://api.slack.com/quickstart"
     },
     {
       "title": "Slack API: Installing with OAuth",
       "url": "https://api.slack.com/authentication/oauth-v2"
-    },
-    {
-      "title": "Slack App Directory Review Guidelines",
-      "url": "https://api.slack.com/legacy/start/distributing/guidelines"
     }
   ],
   "claims": [
@@ -132,9 +133,9 @@
       "sourceUrl": "https://api.slack.com/quickstart"
     },
     {
-      "claim": "Public distribution requires submitting a privacy policy, support URL, and passing Slack App Directory review.",
+      "claim": "Public distribution, so other workspaces can install the app, does not require Marketplace review. You complete the checklist in Manage Distribution and click Activate Public Distribution. Listing in the Slack Marketplace is separate, adds a review, and is recommended for commercial apps.",
       "confidence": "From official docs",
-      "sourceUrl": "https://api.slack.com/legacy/start/distributing/guidelines"
+      "sourceUrl": "https://docs.slack.dev/app-management/distribution/"
     },
     {
       "claim": "Granular bot scopes are strictly enforced and cannot be changed dynamically per authorization.",
@@ -143,7 +144,7 @@
     }
   ],
   "openQuestions": [
-    "How frequently does Slack audit enterprise workspace apps that use wide conversation history scopes without listing on the App Directory?"
+    "How frequently does Slack audit enterprise workspace apps that use wide conversation history scopes without listing on the Marketplace?"
   ],
   "slug": "slack"
 }
