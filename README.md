@@ -21,6 +21,8 @@ I come from a non programming background. I spent the first day learning what OA
 Credentials are not in the repo.
 
 ## How it works
+Note for reviewers: if a guide says "unverified" or "generated without web search", the free Gemini limit has been reached for the day.
+
 1. A developer searches an app name or website.
 2. The app asks Gemini (model gemini-flash-lite-latest) to search Google and read real pages.
 3. Gemini fills in a fixed guide template. Every field has a label: From official docs, Community reported, Estimate, or Could not confirm. If it cannot find something, it says "Not stated in sources" instead of guessing.
@@ -73,7 +75,7 @@ I found these by reading the guides against the official docs, with help from Cl
 - Labels are assigned by AI, and a working link does not prove a claim is right.
 - Only 7 guides are pre checked. 4 others were generated live and are not checked.
 - Generated guides are stored in temporary storage, so a shared link can stop working.
-- The free Gemini quota is small and resets daily at midnight Pacific Time. When it runs out, guides are written without search and marked unverified.
+- I use the free Gemini plan, which has a small daily limit that resets at midnight Pacific Time. When the limit is reached, the app still writes a guide but without Google Search, and the page says "Generated without web search. Treat everything on this page as unverified." If you see this, it is because of the free plan limit, not a bug. Trying again after the reset gives a guide with real sources.
 - I did not create apps or go through approval for Slack, Notion, Linear or Stripe. I did not test Google beyond basic scopes.
 - The guides can go out of date because providers change rules.
 
