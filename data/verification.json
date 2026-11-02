@@ -2,73 +2,61 @@
   {
     "guide": "Slack",
     "guideSlug": "slack",
-    "claim": "Public distribution (Manage Distribution, Activate Public Distribution) lets other workspaces install your app and does not require Slack Marketplace review. A Marketplace listing is a separate step and does add a review.",
+    "claim": "Public distribution does not require Marketplace review",
+    "status": "Corrected",
     "source": "https://api.slack.com/start/distributing",
-    "sourceTitle": "Slack API: Distributing Slack Apps",
-    "status": "verified correct",
-    "notes": "Verified against official Slack documentation (https://api.slack.com/start/distributing). Public distribution is self-serve; Marketplace review is only required for App Directory/Marketplace listing."
+    "notes": "The first AI draft said App Directory review was required. Slack's docs show Manage Distribution does not need it. Marketplace listing is separate."
   },
   {
     "guide": "Slack",
     "guideSlug": "slack",
-    "claim": "Apps do not need Slack review or approval to be installed on development or private workspaces.",
-    "source": "https://api.slack.com/quickstart",
-    "sourceTitle": "Slack API: Quickstart Guide",
-    "status": "verified correct",
-    "notes": "Tested in development workspace. Internal installations take effect immediately upon manifest upload."
-  },
-  {
-    "guide": "Google",
-    "guideSlug": "google",
-    "claim": "Sensitive scopes (verification review, no security assessment, review can take up to about 10 days) and Restricted scopes (verification plus an annual assessment by a Google approved assessor, repeated at least every 12 months, takes several weeks).",
-    "source": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
-    "sourceTitle": "Google Identity: Scope Verification",
-    "status": "verified correct",
-    "notes": "Verified against official Google Identity documentation: sensitive scopes do not require security assessment; restricted scopes (such as full Gmail access) require an annual assessment by a Google approved assessor, repeated at least every 12 months."
-  },
-  {
-    "guide": "Google",
-    "guideSlug": "google",
-    "claim": "Creating and verifying an OAuth app requires a GCP project with billing enabled and allows up to 100 test users before submission.",
-    "source": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
-    "sourceTitle": "Google Identity: Scope Verification",
-    "status": "could not verify",
-    "notes": "Could not confirm requirement for billing enabled or 100 test users limit in official production-readiness verification documentation."
-  },
-  {
-    "guide": "Slack",
-    "guideSlug": "slack",
-    "claim": "Slack bot tokens can dynamically request incremental scopes at runtime without workspace re-authorization.",
+    "claim": "Bot scopes are fixed at install and new scopes need re-authorization",
+    "status": "Corrected",
     "source": "https://api.slack.com/authentication/oauth-v2",
-    "sourceTitle": "Slack OAuth v2 Docs",
-    "status": "corrected",
-    "notes": "Corrected from initial draft: Slack strictly enforces bot scopes granted at install time. Adding new scopes requires prompting the user to re-authorize."
+    "notes": "The first AI draft said scopes could be added at runtime. That was wrong."
+  },
+  {
+    "guide": "Google",
+    "guideSlug": "google",
+    "claim": "Sensitive scopes need verification but not a security assessment",
+    "status": "Corrected",
+    "source": "Google OAuth app verification docs",
+    "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+    "notes": "The first AI draft mixed sensitive and restricted scopes."
+  },
+  {
+    "guide": "Google",
+    "guideSlug": "google",
+    "claim": "Restricted scopes need an assessment at least every 12 months",
+    "status": "Checked against docs",
+    "source": "Google restricted scope verification docs",
+    "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
+    "notes": "Read, not tested."
+  },
+  {
+    "guide": "Google",
+    "guideSlug": "google",
+    "claim": "The demo video must be an Unlisted YouTube video showing the client ID",
+    "status": "Checked against docs",
+    "source": "Google OAuth verification docs",
+    "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+    "notes": "Read, not tested."
+  },
+  {
+    "guide": "Google",
+    "guideSlug": "google",
+    "claim": "Basic sign in scopes can be used with a test user before verification",
+    "status": "Tested by me",
+    "source": "Google Cloud Console",
+    "sourceUrl": "https://console.cloud.google.com",
+    "notes": "Tested on 31 Oct with basic scopes only. Sensitive and restricted scopes not tested."
   },
   {
     "guide": "Notion",
     "guideSlug": "notion",
-    "claim": "Notion does not require manual app review or verification to enable public OAuth.",
-    "source": "https://developers.notion.com/docs/authorization",
-    "sourceTitle": "Notion Authorization Guide",
-    "status": "verified correct",
-    "notes": "Tested public distribution toggle. Providing valid HTTPS redirect URI and privacy policy URLs enabled public OAuth immediately."
-  },
-  {
-    "guide": "Notion",
-    "guideSlug": "notion",
-    "claim": "Notion plans to introduce a mandatory manual review queue for all public integrations.",
-    "source": "https://developers.notion.com",
-    "sourceTitle": "Developer Community Forum",
-    "status": "could not verify",
-    "notes": "Community rumor. No official statement from Notion engineering confirming an approval queue as of Q4 2026."
-  },
-  {
-    "guide": "Linear",
-    "guideSlug": "linear",
-    "claim": "OAuth applications created via workspace settings have instant availability without manual review waits.",
-    "source": "https://linear.app/docs/api/authentication",
-    "sourceTitle": "Linear API Docs",
-    "status": "verified correct",
-    "notes": "Registered test application in workspace settings; client credentials generated and active immediately for testing."
+    "claim": "Notion plans a mandatory review queue for public integrations",
+    "status": "Could not verify",
+    "source": "Community forum",
+    "notes": "Rumor only. No official statement found."
   }
 ]

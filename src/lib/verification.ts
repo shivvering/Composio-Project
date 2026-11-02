@@ -1,13 +1,18 @@
 import fs from 'fs';
 import path from 'path';
 
-export type VerificationStatus = 'verified correct' | 'corrected' | 'could not verify';
+export type VerificationStatus =
+  | 'Corrected'
+  | 'Checked against docs'
+  | 'Tested by me'
+  | 'Could not verify';
 
 export interface VerificationEntry {
   guide: string;
   guideSlug?: string;
   claim: string;
   source: string;
+  sourceUrl?: string;
   sourceTitle?: string;
   status: VerificationStatus;
   notes: string;

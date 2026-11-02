@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { VerificationEntry, VerificationStatus } from '@/lib/verification';
-import { CheckCircle2, AlertTriangle, HelpCircle, ExternalLink, Filter } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, HelpCircle, ExternalLink } from 'lucide-react';
 
 interface VerificationTableProps {
   initialEntries: VerificationEntry[];
@@ -19,7 +19,7 @@ export function VerificationTable({ initialEntries }: VerificationTableProps) {
 
   const getStatusBadge = (status: VerificationStatus) => {
     switch (status) {
-      case 'verified correct':
+      case 'Checked against docs':
         return (
           <span
             style={{
@@ -37,10 +37,10 @@ export function VerificationTable({ initialEntries }: VerificationTableProps) {
             }}
           >
             <CheckCircle2 size={13} />
-            <span>Verified Correct</span>
+            <span>Checked against docs</span>
           </span>
         );
-      case 'corrected':
+      case 'Corrected':
         return (
           <span
             style={{
@@ -61,7 +61,28 @@ export function VerificationTable({ initialEntries }: VerificationTableProps) {
             <span>Corrected</span>
           </span>
         );
-      case 'could not verify':
+      case 'Tested by me':
+        return (
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              padding: '0.2rem 0.6rem',
+              borderRadius: '9999px',
+              backgroundColor: '#f3e8ff',
+              color: '#6b21a8',
+              border: '1px solid #d8b4fe',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <CheckCircle2 size={13} />
+            <span>Tested by me</span>
+          </span>
+        );
+      case 'Could not verify':
         return (
           <span
             style={{
@@ -79,7 +100,7 @@ export function VerificationTable({ initialEntries }: VerificationTableProps) {
             }}
           >
             <HelpCircle size={13} />
-            <span>Could Not Verify</span>
+            <span>Could not verify</span>
           </span>
         );
     }
@@ -114,42 +135,55 @@ export function VerificationTable({ initialEntries }: VerificationTableProps) {
         </button>
 
         <button
-          onClick={() => setFilter('verified correct')}
+          onClick={() => setFilter('Corrected')}
           className="btn-action"
           style={{
-            backgroundColor: filter === 'verified correct' ? '#166534' : 'var(--bg-surface)',
-            color: filter === 'verified correct' ? '#ffffff' : '#166534',
-            borderColor: '#bbf7d0',
-          }}
-        >
-          <CheckCircle2 size={13} />
-          <span>Verified Correct ({countFor('verified correct')})</span>
-        </button>
-
-        <button
-          onClick={() => setFilter('corrected')}
-          className="btn-action"
-          style={{
-            backgroundColor: filter === 'corrected' ? '#1d4ed8' : 'var(--bg-surface)',
-            color: filter === 'corrected' ? '#ffffff' : '#1d4ed8',
+            backgroundColor: filter === 'Corrected' ? '#1d4ed8' : 'var(--bg-surface)',
+            color: filter === 'Corrected' ? '#ffffff' : '#1d4ed8',
             borderColor: '#bfdbfe',
           }}
         >
           <AlertTriangle size={13} />
-          <span>Corrected ({countFor('corrected')})</span>
+          <span>Corrected ({countFor('Corrected')})</span>
         </button>
 
         <button
-          onClick={() => setFilter('could not verify')}
+          onClick={() => setFilter('Checked against docs')}
           className="btn-action"
           style={{
-            backgroundColor: filter === 'could not verify' ? '#92400e' : 'var(--bg-surface)',
-            color: filter === 'could not verify' ? '#ffffff' : '#92400e',
+            backgroundColor: filter === 'Checked against docs' ? '#166534' : 'var(--bg-surface)',
+            color: filter === 'Checked against docs' ? '#ffffff' : '#166534',
+            borderColor: '#bbf7d0',
+          }}
+        >
+          <CheckCircle2 size={13} />
+          <span>Checked against docs ({countFor('Checked against docs')})</span>
+        </button>
+
+        <button
+          onClick={() => setFilter('Tested by me')}
+          className="btn-action"
+          style={{
+            backgroundColor: filter === 'Tested by me' ? '#6b21a8' : 'var(--bg-surface)',
+            color: filter === 'Tested by me' ? '#ffffff' : '#6b21a8',
+            borderColor: '#d8b4fe',
+          }}
+        >
+          <CheckCircle2 size={13} />
+          <span>Tested by me ({countFor('Tested by me')})</span>
+        </button>
+
+        <button
+          onClick={() => setFilter('Could not verify')}
+          className="btn-action"
+          style={{
+            backgroundColor: filter === 'Could not verify' ? '#92400e' : 'var(--bg-surface)',
+            color: filter === 'Could not verify' ? '#ffffff' : '#92400e',
             borderColor: '#fde68a',
           }}
         >
           <HelpCircle size={13} />
-          <span>Could Not Verify ({countFor('could not verify')})</span>
+          <span>Could not verify ({countFor('Could not verify')})</span>
         </button>
       </div>
 
@@ -184,8 +218,8 @@ export function VerificationTable({ initialEntries }: VerificationTableProps) {
             >
               <th style={{ padding: '0.85rem 1rem', width: '130px' }}>Guide</th>
               <th style={{ padding: '0.85rem 1rem', minWidth: '220px' }}>Claim</th>
-              <th style={{ padding: '0.85rem 1rem', width: '160px' }}>Status</th>
-              <th style={{ padding: '0.85rem 1rem', width: '180px' }}>Source</th>
+              <th style={{ padding: '0.85rem 1rem', width: '170px' }}>Status</th>
+              <th style={{ padding: '0.85rem 1rem', width: '200px' }}>Source</th>
               <th style={{ padding: '0.85rem 1rem', minWidth: '220px' }}>Notes</th>
             </tr>
           </thead>
@@ -230,25 +264,29 @@ export function VerificationTable({ initialEntries }: VerificationTableProps) {
                   {getStatusBadge(entry.status)}
                 </td>
 
-                {/* Source Link */}
+                {/* Source Link or Text */}
                 <td style={{ padding: '1rem' }}>
                   {entry.source ? (
-                    <a
-                      href={entry.source}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{
-                        color: 'var(--primary)',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.35rem',
-                        fontWeight: 500,
-                        wordBreak: 'break-word',
-                      }}
-                    >
-                      <span>{entry.sourceTitle || 'View Source'}</span>
-                      <ExternalLink size={13} style={{ flexShrink: 0 }} />
-                    </a>
+                    (entry.sourceUrl || entry.source.startsWith('http')) ? (
+                      <a
+                        href={entry.sourceUrl || entry.source}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          color: 'var(--primary)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          fontWeight: 500,
+                          wordBreak: 'break-word',
+                        }}
+                      >
+                        <span>{entry.source}</span>
+                        <ExternalLink size={13} style={{ flexShrink: 0 }} />
+                      </a>
+                    ) : (
+                      <span style={{ color: 'var(--text-secondary)' }}>{entry.source}</span>
+                    )
                   ) : (
                     <span style={{ color: 'var(--text-muted)' }}>—</span>
                   )}
