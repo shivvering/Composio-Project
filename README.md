@@ -1,6 +1,6 @@
 # OAuth Path 🧭
 
-> Clear, developer-tested guides on navigating OAuth setup, approval wait times, and compliance requirements for AI agent builders.
+> AI generated, checked against official docs where marked. Clear guides on navigating OAuth setup, approval wait times, and compliance requirements for AI agent builders.
 
 Connecting an AI agent to third-party services like Gmail, Slack, and Notion is quick in code, but navigating third-party OAuth app approvals is confusing and unpredictable. Every provider is different: approval can take hours or weeks, and developers often have to email providers or get blocked by unexpected CASA security audits.
 

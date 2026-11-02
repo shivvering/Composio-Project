@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { Compass, BookOpen, ShieldCheck, ExternalLink } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'OAuth Path | AI Agent OAuth & App Approval Guides',
+  title: 'OAuth Path | AI generated, checked against official docs where marked',
   description:
-    'Clear, developer-tested guides on navigating OAuth setup, approval wait times, and compliance requirements for AI agents.',
+    'AI generated, checked against official docs where marked. Clear guides on navigating OAuth setup, approval wait times, and compliance requirements for AI agents.',
 };
 
 export default function RootLayout({
@@ -47,7 +47,7 @@ export default function RootLayout({
         <footer className="site-footer">
           <div className="container site-footer-inner">
             <div>
-              <strong>OAuth Path</strong> — Clear, verified OAuth setup & approval roadmaps for AI agent builders.
+              OAuth Path: AI generated OAuth setup and approval guides for AI agent builders. Check provider docs before you rely on a guide.
             </div>
             <div style={{ display: 'flex', gap: '1.25rem' }}>
               <Link href="/" className="no-print">Guides</Link>

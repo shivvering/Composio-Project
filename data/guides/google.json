@@ -7,17 +7,17 @@
   "lastVerified": "1 November 2026",
   "difficulty": {
     "level": "hard",
-    "reason": "Two clearly separate parts: Sensitive scopes (verification review, no security assessment, review can take up to about 10 days) and Restricted scopes (verification plus an annual assessment by a Google approved assessor, repeated at least every 12 months, takes several weeks). Estimate, not from Google. Sensitive scopes: up to about 10 days per Google. Restricted scopes: several weeks plus assessor time.",
+    "reason": "Two clearly separate parts: Sensitive scopes (verification review, no security assessment, review can take up to about 10 days) and Restricted scopes (verification plus an annual assessment by a Google approved assessor, repeated at least every 12 months). Restricted scopes usually take several weeks in total (Estimate). Sensitive scopes: up to about 10 days (From official docs). Restricted scopes: several weeks plus assessor time (Estimate, not from Google).",
     "confidence": "From official docs",
     "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
   },
   "timeEstimate": {
     "setupTime": "2 - 4 hours",
-    "setupTimeConfidence": "Community reported",
-    "approvalWait": "Estimate, not from Google. Sensitive scopes: up to about 10 days per Google. Restricted scopes: several weeks plus assessor time.",
+    "setupTimeConfidence": "Estimate",
+    "approvalWait": "Sensitive scopes: up to about 10 days (From official docs).\nRestricted scopes: several weeks plus assessor time (Estimate, not from Google).",
     "approvalWaitConfidence": "Unverified estimate",
     "approvalWaitSourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
-    "notes": "Estimate, not from Google. Sensitive scopes: up to about 10 days per Google. Restricted scopes: several weeks plus assessor time."
+    "notes": "Sensitive scopes: up to about 10 days (From official docs).\nRestricted scopes: several weeks plus assessor time (Estimate, not from Google)."
   },
   "requirements": [
     {
@@ -107,7 +107,7 @@
     {
       "stepNumber": 6,
       "title": "Submit Restricted Scopes: Annual Assessment",
-      "description": "Part 2 (Restricted scopes, such as full Gmail access): Verification plus an annual assessment by a Google approved assessor, repeated at least every 12 months, which Google says takes several weeks. (Estimate, not from Google. Sensitive scopes: up to about 10 days per Google. Restricted scopes: several weeks plus assessor time. Reported by third parties, not on Google's pages. Check with the assessor.)",
+      "description": "Part 2 (Restricted scopes, such as full Gmail access): Verification plus an annual assessment by a Google approved assessor, repeated at least every 12 months. Restricted scopes usually take several weeks in total (Estimate). Sensitive scopes: up to about 10 days (From official docs). Restricted scopes: several weeks plus assessor time (Estimate, not from Google). Reported by third parties, not on Google's pages. Check with the assessor.",
       "actionUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
       "confidence": "From official docs",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
@@ -134,7 +134,7 @@
     },
     {
       "problem": "Restricted scopes requirement: annual assessment by a Google approved assessor, repeated at least every 12 months",
-      "solution": "Restricted scopes (such as full Gmail access) require all sensitive scope criteria plus an annual assessment by a Google approved assessor, repeated at least every 12 months. Google says verification takes several weeks. Estimate, not from Google. Sensitive scopes: up to about 10 days per Google. Restricted scopes: several weeks plus assessor time. Reported by third parties, not on Google's pages. Check with the assessor. Sensitive scopes: verification review, no security assessment, review can take up to about 10 days.",
+      "solution": "Restricted scopes (such as full Gmail access) require all sensitive scope criteria plus an annual assessment by a Google approved assessor, repeated at least every 12 months. Restricted scopes usually take several weeks in total (Estimate). Sensitive scopes: up to about 10 days (From official docs). Restricted scopes: several weeks plus assessor time (Estimate, not from Google). Reported by third parties, not on Google's pages. Check with the assessor. Sensitive scopes: verification review, no security assessment, review can take up to about 10 days.",
       "confidence": "From official docs",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
     }
@@ -153,7 +153,7 @@
     ]
   },
   "managedOption": {
-    "managedSufficientWhen": "Composio's pre-verified Google OAuth app is the fastest path when building AI assistants or agent tools that need restricted scopes (such as full Gmail access) without waiting on an annual assessment by a Google approved assessor, repeated at least every 12 months (Estimate, not from Google. Sensitive scopes: up to about 10 days per Google. Restricted scopes: several weeks plus assessor time. Reported by third parties, not on Google's pages. Check with the assessor.). This site was built for a Composio assignment, and Composio sells managed OAuth.",
+    "managedSufficientWhen": "Composio provides a pre-verified Google OAuth app (Composio's own claim, not independently checked) for building AI assistants or agent tools that need restricted scopes (such as full Gmail access) without waiting on an annual assessment by a Google approved assessor, repeated at least every 12 months. Sensitive scopes: up to about 10 days (From official docs). Restricted scopes: several weeks plus assessor time (Estimate, not from Google). This site was built for a Composio assignment, and Composio sells managed OAuth.",
     "customRequiredWhen": "You must complete custom Google verification if your enterprise customers demand your specific brand name on the Google consent dialog, or if your enterprise security policy prohibits routing tokens through a third-party managed infrastructure."
   },
   "sources": [
@@ -173,7 +173,7 @@
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
-      "claim": "Restricted scopes: verification plus an annual assessment by a Google approved assessor, repeated at least every 12 months, takes several weeks.",
+      "claim": "Restricted scopes: verification plus an annual assessment by a Google approved assessor, repeated at least every 12 months. Restricted scopes usually take several weeks in total (Estimate).",
       "confidence": "From official docs",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
     },
@@ -183,7 +183,12 @@
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
-      "claim": "Estimate, not from Google. Sensitive scopes: up to about 10 days per Google. Restricted scopes: several weeks plus assessor time.",
+      "claim": "Sensitive scopes: up to about 10 days (From official docs).",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+    },
+    {
+      "claim": "Restricted scopes: several weeks plus assessor time (Estimate, not from Google).",
       "confidence": "Unverified estimate",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
     },
@@ -194,6 +199,10 @@
     {
       "claim": "Google Cloud Platform (GCP) project with billing enabled and 100 test user cap in OAuth consent screen testing mode before verification.",
       "confidence": "Could not confirm"
+    },
+    {
+      "claim": "Composio provides a pre-verified Google OAuth app.",
+      "confidence": "Composio's own claim, not independently checked"
     }
   ],
   "openQuestions": [

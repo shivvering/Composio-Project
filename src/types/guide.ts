@@ -4,7 +4,9 @@ export type ConfidenceLabel =
   | 'From official docs'
   | 'Community reported'
   | 'Unverified estimate'
-  | 'Could not confirm';
+  | 'Could not confirm'
+  | 'Estimate'
+  | "Composio's own claim, not independently checked";
 
 export type ClaimConfidence =
   | 'verified'
@@ -13,6 +15,8 @@ export type ClaimConfidence =
   | 'Community reported'
   | 'Unverified estimate'
   | 'Could not confirm'
+  | 'Estimate'
+  | "Composio's own claim, not independently checked"
   | 'unverified';
 
 export interface ConfidenceMetadata {

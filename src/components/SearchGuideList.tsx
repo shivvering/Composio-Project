@@ -375,18 +375,39 @@ export function SearchGuideList({ initialGuides }: SearchGuideListProps) {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     marginBottom: '0.75rem',
+                    flexWrap: 'wrap',
+                    gap: '0.4rem',
                   }}
                 >
-                  <h3
-                    style={{
-                      fontSize: '1.25rem',
-                      fontWeight: 700,
-                      color: 'var(--text-primary)',
-                      letterSpacing: '-0.01em',
-                    }}
-                  >
-                    {guide.appName}
-                  </h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <h3
+                      style={{
+                        fontSize: '1.25rem',
+                        fontWeight: 700,
+                        color: 'var(--text-primary)',
+                        letterSpacing: '-0.01em',
+                        margin: 0,
+                      }}
+                    >
+                      {guide.appName}
+                    </h3>
+                    {['discord', 'plaid', 'spotify', 'zoom'].includes((guide.slug || guide.appName).toLowerCase()) && (
+                      <span
+                        style={{
+                          fontSize: '0.675rem',
+                          fontWeight: 600,
+                          padding: '0.15rem 0.45rem',
+                          borderRadius: '9999px',
+                          backgroundColor: '#fef3c7',
+                          color: '#92400e',
+                          border: '1px solid #fde68a',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        Generated live, unchecked
+                      </span>
+                    )}
+                  </div>
                   <DifficultyBadge level={guide.difficulty.level} />
                 </div>
 

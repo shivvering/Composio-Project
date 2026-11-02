@@ -2,8 +2,8 @@
   "appName": "Notion",
   "website": "https://developers.notion.com",
   "lastChecked": "2026-10-31",
-  "manuallyChecked": true,
-  "lastVerified": "2026-10-31",
+  "manuallyChecked": false,
+  "spotChecked": true,
   "difficulty": {
     "level": "easy",
     "reason": "Internal integrations take minutes; public OAuth requires zero manual Notion review before going live.",

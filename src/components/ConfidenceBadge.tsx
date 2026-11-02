@@ -18,7 +18,15 @@ export function ConfidenceBadge({
   let label = confidence;
   let Icon = HelpCircle;
 
-  if (norm.includes('could not confirm') || norm.includes('could not verify')) {
+  if (norm.includes("composio's own claim") || norm.includes('composio')) {
+    badgeClass = 'badge-confidence unverified';
+    label = "Composio's own claim, not independently checked";
+    Icon = HelpCircle;
+  } else if (norm === 'estimate') {
+    badgeClass = 'badge-confidence unverified';
+    label = 'Estimate';
+    Icon = HelpCircle;
+  } else if (norm.includes('could not confirm') || norm.includes('could not verify')) {
     badgeClass = 'badge-confidence unverified';
     label = 'Could not confirm';
     Icon = HelpCircle;

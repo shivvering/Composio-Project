@@ -18,11 +18,15 @@ const VALID_CONFIDENCE_LABELS: ConfidenceLabel[] = [
   'Community reported',
   'Unverified estimate',
   'Could not confirm',
+  'Estimate',
+  "Composio's own claim, not independently checked",
 ];
 
 function normalizeConfidence(conf: any, defaultVal: ConfidenceLabel = 'Unverified estimate'): ConfidenceLabel {
   if (typeof conf !== 'string') return defaultVal;
   const lower = conf.toLowerCase().trim();
+  if (lower.includes("composio's own claim") || lower.includes("composio")) return "Composio's own claim, not independently checked";
+  if (lower === 'estimate') return 'Estimate';
   if (lower.includes('could not confirm') || lower.includes('could not verify')) return 'Could not confirm';
   if (lower.includes('official') || lower.includes('docs')) return 'From official docs';
   if (lower.includes('community')) return 'Community reported';

@@ -200,12 +200,14 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
           <strong>
             {params.slug?.toLowerCase() === 'slack' || guide.slug === 'slack'
               ? `AI generated, checked against Slack docs on ${guide.lastVerified || guide.lastChecked || '2026-10-31'}:`
+              : params.slug?.toLowerCase() === 'notion' || guide.slug === 'notion'
+              ? `AI generated, checked against Notion docs on ${guide.lastVerified || guide.lastChecked || '2026-10-31'}:`
               : guide.spotChecked ||
                 params.slug?.toLowerCase() === 'google' ||
                 guide.slug === 'google'
               ? `AI generated, spot checked on ${guide.lastVerified || guide.lastChecked}:`
               : guide.manuallyChecked
-              ? `Manually Verified Guide (Last verified ${guide.lastVerified || guide.lastChecked}):`
+              ? `Checked on ${guide.lastVerified || guide.lastChecked}:`
               : `Generated on ${guide.lastChecked}:`}
           </strong>{' '}
           Provider OAuth rules and review policies change frequently — always verify current submission requirements with the{' '}
@@ -301,12 +303,14 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
                 <span>
                   {params.slug?.toLowerCase() === 'slack' || guide.slug === 'slack'
                     ? `AI generated, checked against Slack docs on ${guide.lastVerified || guide.lastChecked || '2026-10-31'}`
+                    : params.slug?.toLowerCase() === 'notion' || guide.slug === 'notion'
+                    ? `AI generated, checked against Notion docs on ${guide.lastVerified || guide.lastChecked || '2026-10-31'}`
                     : guide.spotChecked ||
                       params.slug?.toLowerCase() === 'google' ||
                       guide.slug === 'google'
                     ? `AI generated, spot checked on ${guide.lastVerified || guide.lastChecked}`
                     : guide.manuallyChecked
-                    ? `Last verified: ${guide.lastVerified || guide.lastChecked}`
+                    ? `Checked on ${guide.lastVerified || guide.lastChecked}`
                     : `Generated on ${guide.lastChecked}`}
                 </span>
               </span>
@@ -366,9 +370,9 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
                 <Hourglass size={15} color="#d97706" />
                 <span>Approval Wait</span>
               </div>
-              <div className="at-a-glance-val" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+              <div className="at-a-glance-val" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap', whiteSpace: 'pre-line' }}>
                 <span>{guide.timeEstimate.approvalWait}</span>
-                {guide.timeEstimate.approvalWaitConfidence && (
+                {guide.timeEstimate.approvalWaitConfidence && !guide.timeEstimate.approvalWait.includes('(From official docs)') && (
                   <ConfidenceBadge
                     confidence={isUngrounded ? 'Unverified estimate' : guide.timeEstimate.approvalWaitConfidence}
                     sourceUrl={isUngrounded ? undefined : guide.timeEstimate.approvalWaitSourceUrl}
@@ -376,7 +380,7 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
                   />
                 )}
               </div>
-              <p className="at-a-glance-desc">
+              <p className="at-a-glance-desc" style={{ whiteSpace: 'pre-line' }}>
                 {guide.timeEstimate.notes || 'Turnaround duration before production scopes or public app authorizations are approved.'}
               </p>
             </div>
@@ -424,30 +428,52 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
             </div>
             <ConfidenceBadge confidence={reqSectionConfidence} size="sm" />
           </div>
-          <div className="reqs-list">
+          <div className="reqs-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginTop: '0.75rem' }}>
             {guide.requirements.map((req, i) => {
               const isObj = typeof req === 'object' && req !== null;
               const text = isObj ? req.text : req;
-              const conf = isUngrounded ? 'Unverified estimate' : (isObj ? req.confidence : 'From official docs');
+              const conf = isUngrounded ? 'Unverified estimate' : (isObj && req.confidence ? req.confidence : 'From official docs');
               const src = isUngrounded ? undefined : (isObj ? req.sourceUrl : undefined);
-              const notOfficial = isUngrounded || !isOfficial(conf);
 
               return (
-                <span
+                <div
                   key={i}
-                  className={`req-badge ${notOfficial ? 'highlighted-non-official' : ''}`}
                   style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.45rem',
-                    flexWrap: 'wrap',
+                    fontSize: '0.875rem',
+                    lineHeight: 1.5,
+                    color: 'var(--text-secondary)',
                   }}
                 >
-                  <span>• {text}</span>
-                  {notOfficial && (
-                    <ConfidenceBadge confidence={conf} sourceUrl={src} size="sm" />
+                  <span>• {text} </span>
+                  <span
+                    style={{
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color:
+                        conf === 'From official docs'
+                          ? '#15803d'
+                          : conf === 'Community reported'
+                          ? '#4338ca'
+                          : conf === 'Could not confirm'
+                          ? '#b45309'
+                          : '#6b7280',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    ({conf})
+                  </span>
+                  {src && (
+                    <a
+                      href={src}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ color: 'var(--text-muted)', marginLeft: '0.35rem', display: 'inline-flex', verticalAlign: 'middle' }}
+                      title={`View source: ${src}`}
+                    >
+                      <ExternalLink size={12} />
+                    </a>
                   )}
-                </span>
+                </div>
               );
             })}
           </div>
