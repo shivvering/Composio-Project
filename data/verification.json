@@ -2,11 +2,11 @@
   {
     "guide": "Slack",
     "guideSlug": "slack",
-    "claim": "Public distribution, so other workspaces can install the app, does not require Marketplace review. You complete the checklist in Manage Distribution and click Activate Public Distribution. Listing in the Slack Marketplace is separate, adds a review, and is recommended for commercial apps.",
-    "source": "https://docs.slack.dev/app-management/distribution/",
-    "sourceTitle": "Slack Docs: Distributing Slack Apps",
+    "claim": "Public distribution (Manage Distribution, Activate Public Distribution) lets other workspaces install your app and does not require Slack Marketplace review. A Marketplace listing is a separate step and does add a review.",
+    "source": "https://api.slack.com/start/distributing",
+    "sourceTitle": "Slack API: Distributing Slack Apps",
     "status": "verified correct",
-    "notes": "Verified against official Slack documentation (https://docs.slack.dev/app-management/distribution/). Public distribution is self-serve; Marketplace review is only required for App Directory/Marketplace listing."
+    "notes": "Verified against official Slack documentation (https://api.slack.com/start/distributing). Public distribution is self-serve; Marketplace review is only required for App Directory/Marketplace listing."
   },
   {
     "guide": "Slack",
@@ -20,11 +20,11 @@
   {
     "guide": "Google",
     "guideSlug": "google",
-    "claim": "Sensitive scopes: verification needs a justification for each scope, an Unlisted YouTube demo video with client ID visible in the address bar, and domain verification in Search Console by a project Owner or Editor. Google says it can take up to 10 days, and no security assessment is required. Restricted scopes (such as full Gmail access): all of that plus an annual security assessment by a Google approved assessor.",
+    "claim": "Sensitive scopes (verification review, no security assessment, review can take up to about 10 days) and Restricted scopes (verification plus an annual assessment by a Google approved assessor, repeated at least every 12 months, takes several weeks).",
     "source": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
     "sourceTitle": "Google Identity: Scope Verification",
     "status": "verified correct",
-    "notes": "Verified against official Google Identity documentation: sensitive scopes do not require security assessment; restricted scopes (such as full Gmail access) require annual reassessment at least every 12 months."
+    "notes": "Verified against official Google Identity documentation: sensitive scopes do not require security assessment; restricted scopes (such as full Gmail access) require an annual assessment by a Google approved assessor, repeated at least every 12 months."
   },
   {
     "guide": "Google",

@@ -198,11 +198,11 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
         <Sparkles size={18} color="#7c3aed" style={{ flexShrink: 0, marginTop: '2px' }} />
         <div>
           <strong>
-            {guide.spotChecked ||
-            params.slug?.toLowerCase() === 'google' ||
-            guide.slug === 'google' ||
-            params.slug?.toLowerCase() === 'slack' ||
-            guide.slug === 'slack'
+            {params.slug?.toLowerCase() === 'slack' || guide.slug === 'slack'
+              ? `AI generated, checked against Slack docs on ${guide.lastVerified || guide.lastChecked || '2026-10-31'}:`
+              : guide.spotChecked ||
+                params.slug?.toLowerCase() === 'google' ||
+                guide.slug === 'google'
               ? `AI generated, spot checked on ${guide.lastVerified || guide.lastChecked}:`
               : guide.manuallyChecked
               ? `Manually Verified Guide (Last verified ${guide.lastVerified || guide.lastChecked}):`
@@ -299,11 +299,11 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
                 <Calendar size={14} />
                 <span>
-                  {guide.spotChecked ||
-                  params.slug?.toLowerCase() === 'google' ||
-                  guide.slug === 'google' ||
-                  params.slug?.toLowerCase() === 'slack' ||
-                  guide.slug === 'slack'
+                  {params.slug?.toLowerCase() === 'slack' || guide.slug === 'slack'
+                    ? `AI generated, checked against Slack docs on ${guide.lastVerified || guide.lastChecked || '2026-10-31'}`
+                    : guide.spotChecked ||
+                      params.slug?.toLowerCase() === 'google' ||
+                      guide.slug === 'google'
                     ? `AI generated, spot checked on ${guide.lastVerified || guide.lastChecked}`
                     : guide.manuallyChecked
                     ? `Last verified: ${guide.lastVerified || guide.lastChecked}`
@@ -733,7 +733,7 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
           <ConfidenceBadge confidence={claimsSectionConfidence} size="sm" />
         </div>
         <p className="guide-section-subtitle">
-          Specific factual statements evaluated against official documentation and live developer tests.
+          Specific factual statements evaluated against sources.
         </p>
 
         <div className="claims-list">

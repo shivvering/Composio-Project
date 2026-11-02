@@ -7,17 +7,17 @@
   "lastVerified": "1 November 2026",
   "difficulty": {
     "level": "hard",
-    "reason": "Two distinct verification paths: Sensitive scopes require written justification for each scope, an Unlisted YouTube demo video showing client ID visible in the address bar, and Search Console domain verification (Google says it can take up to 10 days, and no security assessment is required). Restricted scopes (such as full Gmail access: https://mail.google.com/) require all of that plus an annual security assessment by a Google-approved assessor at least every 12 months (Google says can take several weeks; 2 to 6 weeks is an unverified estimate).",
+    "reason": "Two clearly separate parts: Sensitive scopes (verification review, no security assessment, review can take up to about 10 days) and Restricted scopes (verification plus an annual assessment by a Google approved assessor, repeated at least every 12 months, takes several weeks). Estimate, not from Google. Sensitive scopes: up to about 10 days per Google. Restricted scopes: several weeks plus assessor time.",
     "confidence": "From official docs",
     "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
   },
   "timeEstimate": {
     "setupTime": "2 - 4 hours",
     "setupTimeConfidence": "Community reported",
-    "approvalWait": "Sensitive: up to 10 days; Restricted: several weeks (2 to 6 weeks)",
+    "approvalWait": "Estimate, not from Google. Sensitive scopes: up to about 10 days per Google. Restricted scopes: several weeks plus assessor time.",
     "approvalWaitConfidence": "Unverified estimate",
     "approvalWaitSourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
-    "notes": "Sensitive scopes: verification takes up to 10 days (no security assessment required). Restricted scopes (such as full Gmail access: https://mail.google.com/): Google says verification can take several weeks, with 2 to 6 weeks being an unverified estimate depending on third-party assessor turnaround."
+    "notes": "Estimate, not from Google. Sensitive scopes: up to about 10 days per Google. Restricted scopes: several weeks plus assessor time."
   },
   "requirements": [
     {
@@ -46,17 +46,12 @@
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
-      "text": "Annual reassessment (at least every 12 months) by a Google approved assessor for restricted scopes (such as full Gmail access: https://mail.google.com/)",
+      "text": "Annual assessment by a Google approved assessor, repeated at least every 12 months, for restricted scopes",
       "confidence": "From official docs",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
     },
     {
-      "text": "CASA Tier 2 security assessment for restricted scopes",
-      "confidence": "Community reported",
-      "sourceUrl": "https://appdefensealliance.org/casa"
-    },
-    {
-      "text": "$500 to $3,000 dollar fee paid to third-party security lab for restricted scope assessment",
+      "text": "Reported by third parties, not on Google's pages. Check with the assessor.",
       "confidence": "Community reported"
     },
     {
@@ -64,7 +59,7 @@
       "confidence": "Could not confirm"
     },
     {
-      "text": "Up to 100 test users allowed in OAuth consent screen testing mode before verification",
+      "text": "100 test user cap in OAuth consent screen testing mode before verification",
       "confidence": "Could not confirm"
     }
   ],
@@ -104,15 +99,15 @@
     {
       "stepNumber": 5,
       "title": "Submit Sensitive Scopes: Written Justifications",
-      "description": "Case 1 (Sensitive Scopes): Submit for verification in GCP Console. Each sensitive scope needs a written justification explaining why non-sensitive scopes are inadequate. Google says it can take up to 10 days, and no security assessment is required.",
+      "description": "Part 1 (Sensitive scopes): Verification review, no security assessment, review can take up to about 10 days. Each sensitive scope needs a written justification explaining why non-sensitive scopes are inadequate.",
       "actionUrl": "https://console.cloud.google.com/apis/credentials/consent",
       "confidence": "From official docs",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
       "stepNumber": 6,
-      "title": "Submit Restricted Scopes: Annual Security Assessment",
-      "description": "Case 2 (Restricted Scopes, such as full Gmail access: https://mail.google.com/): Requires all sensitive scope items plus an annual security assessment by a Google approved assessor (at least every 12 months). Google says it can take several weeks (2 to 6 weeks is an unverified estimate; community reports CASA Tier 2 fees of $500 to $3,000).",
+      "title": "Submit Restricted Scopes: Annual Assessment",
+      "description": "Part 2 (Restricted scopes, such as full Gmail access): Verification plus an annual assessment by a Google approved assessor, repeated at least every 12 months, which Google says takes several weeks. (Estimate, not from Google. Sensitive scopes: up to about 10 days per Google. Restricted scopes: several weeks plus assessor time. Reported by third parties, not on Google's pages. Check with the assessor.)",
       "actionUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
       "confidence": "From official docs",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
@@ -127,19 +122,19 @@
     },
     {
       "problem": "Demo video rejected because client ID is not visible in address bar or video is not Unlisted",
-      "solution": "Re-record an Unlisted YouTube demo video ensuring the browser address bar clearly shows the full `client_id` query parameter during the OAuth redirect, and demonstrating how the app uses requested scopes.",
+      "solution": "Re-record an Unlisted YouTube demo video ensuring the browser address bar clearly shows the full client_id query parameter during the OAuth redirect, and demonstrating how the app uses requested scopes.",
       "confidence": "From official docs",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
       "problem": "Sensitive scope rejected for inadequate written justification",
-      "solution": "Each sensitive scope needs a written justification explaining user-facing necessity. Sensitive scopes do not require a security assessment (Google says review takes up to 10 days).",
+      "solution": "Each sensitive scope needs a written justification explaining user-facing necessity. Sensitive scopes: verification review, no security assessment, review can take up to about 10 days.",
       "confidence": "From official docs",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
-      "problem": "Restricted scope security assessment costs ($500 to $3,000) and lead times (several weeks / 2 to 6 weeks)",
-      "solution": "Restricted scopes (such as full Gmail access: https://mail.google.com/) require all sensitive scope criteria plus an annual security assessment by a Google approved assessor at least every 12 months. Google says it can take several weeks (2 to 6 weeks unverified estimate; community reports CASA Tier 2 fees of $500 to $3,000). Sensitive scopes do not require a security assessment.",
+      "problem": "Restricted scopes requirement: annual assessment by a Google approved assessor, repeated at least every 12 months",
+      "solution": "Restricted scopes (such as full Gmail access) require all sensitive scope criteria plus an annual assessment by a Google approved assessor, repeated at least every 12 months. Google says verification takes several weeks. Estimate, not from Google. Sensitive scopes: up to about 10 days per Google. Restricted scopes: several weeks plus assessor time. Reported by third parties, not on Google's pages. Check with the assessor. Sensitive scopes: verification review, no security assessment, review can take up to about 10 days.",
       "confidence": "From official docs",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
     }
@@ -153,12 +148,12 @@
     "developerMustDo": [
       "Verify domain in Google Search Console as a GCP project Owner or Editor",
       "Ensure homepage is public, describes the app, and hosts the privacy policy on the same domain",
-      "Record and upload the Unlisted YouTube demo video showing client ID visible in the address bar and scope usage",
-      "Undergo annual reassessment (at least every 12 months) by a Google approved assessor for restricted scopes (such as full Gmail access)"
+      "Record and upload an Unlisted YouTube demo video showing client ID visible in the address bar and scope usage",
+      "Complete an annual assessment by a Google approved assessor, repeated at least every 12 months, for restricted scopes (such as full Gmail access)"
     ]
   },
   "managedOption": {
-    "managedSufficientWhen": "Composio's pre-verified Google OAuth app is the fastest path when building AI assistants or agent tools that need restricted scopes (such as full Gmail access: https://mail.google.com/) without spending several weeks (2 to 6 weeks unverified estimate) and $500 to $3,000 on annual security assessments. This tool was built for a Composio assignment, and Composio sells managed OAuth.",
+    "managedSufficientWhen": "Composio's pre-verified Google OAuth app is the fastest path when building AI assistants or agent tools that need restricted scopes (such as full Gmail access) without waiting on an annual assessment by a Google approved assessor, repeated at least every 12 months (Estimate, not from Google. Sensitive scopes: up to about 10 days per Google. Restricted scopes: several weeks plus assessor time. Reported by third parties, not on Google's pages. Check with the assessor.). This site was built for a Composio assignment, and Composio sells managed OAuth.",
     "customRequiredWhen": "You must complete custom Google verification if your enterprise customers demand your specific brand name on the Google consent dialog, or if your enterprise security policy prohibits routing tokens through a third-party managed infrastructure."
   },
   "sources": [
@@ -169,45 +164,40 @@
     {
       "title": "Google Identity: Restricted Scope Verification",
       "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
-    },
-    {
-      "title": "App Defense Alliance: CASA Assessment",
-      "url": "https://appdefensealliance.org/casa"
     }
   ],
   "claims": [
     {
-      "claim": "Sensitive scopes: verification needs a justification for each scope, an Unlisted YouTube demo video with client ID visible in the address bar, and domain verification in Search Console by a project Owner or Editor. Google says it can take up to 10 days, and no security assessment is required.",
+      "claim": "Sensitive scopes: verification review, no security assessment, review can take up to about 10 days.",
       "confidence": "From official docs",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
-      "claim": "Restricted scopes (such as full Gmail access: https://mail.google.com/): all sensitive scope requirements plus an annual security assessment by a Google approved assessor (at least every 12 months), which Google says can take several weeks.",
+      "claim": "Restricted scopes: verification plus an annual assessment by a Google approved assessor, repeated at least every 12 months, takes several weeks.",
       "confidence": "From official docs",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
     },
     {
-      "claim": "Google OAuth app approval and security assessment for restricted scopes takes 2 to 6 weeks.",
+      "claim": "Verified domain in Search Console by a project Owner or Editor, privacy policy on the same domain as a public homepage describing the app, Unlisted YouTube demo video showing the client ID in the address bar, and written justification for each sensitive scope.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+    },
+    {
+      "claim": "Estimate, not from Google. Sensitive scopes: up to about 10 days per Google. Restricted scopes: several weeks plus assessor time.",
       "confidence": "Unverified estimate",
       "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
     },
     {
-      "claim": "Restricted scopes require a CASA Tier 2 security assessment with third-party assessor fees ranging from $500 to $3,000.",
-      "confidence": "Community reported",
-      "sourceUrl": "https://appdefensealliance.org/casa"
+      "claim": "Reported by third parties, not on Google's pages. Check with the assessor.",
+      "confidence": "Community reported"
     },
     {
-      "claim": "The privacy policy must be on the same domain as the homepage, and the homepage must be public and describe the app.",
-      "confidence": "From official docs",
-      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
-    },
-    {
-      "claim": "Creating and verifying an OAuth app requires a GCP project with billing enabled and allows up to 100 test users before submission.",
+      "claim": "Google Cloud Platform (GCP) project with billing enabled and 100 test user cap in OAuth consent screen testing mode before verification.",
       "confidence": "Could not confirm"
     }
   ],
   "openQuestions": [
-    "Does Google offer fee subsidies or waivers for early-stage bootstrapped AI agent startups undertaking annual third-party restricted scope security assessments?"
+    "Does Google offer fee subsidies or waivers for early-stage bootstrapped AI agent startups undertaking an annual assessment by a Google approved assessor, repeated at least every 12 months?"
   ],
   "slug": "google"
 }
