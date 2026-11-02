@@ -331,7 +331,7 @@ ${extraFeedback ? `\nPREVIOUS ATTEMPT FAILED WITH THESE ERRORS:\n${extraFeedback
 `;
 
   // 3. Execution
-  const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite';
+  const primaryModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
   let geminiResult = await callGeminiWithSearch(buildPrompt(), apiKey, primaryModel);
   let rawResponse = geminiResult.data;
   let isGrounded = geminiResult.groundedWithSearch;
