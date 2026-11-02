@@ -34,7 +34,7 @@ import type { Metadata } from 'next';
 function isOfficial(conf?: string): boolean {
   if (!conf) return true;
   const lower = conf.toLowerCase();
-  return lower.includes('official') || lower.includes('docs');
+  return (lower.includes('official') || lower.includes('docs')) && !lower.includes('could not');
 }
 
 function getSectionConfidence(
@@ -46,6 +46,7 @@ function getSectionConfidence(
   if (!items || items.length === 0) return defaultConf;
 
   const confs = items.map((i) => (i.confidence || '').toLowerCase());
+  if (confs.some((c) => c.includes('could not'))) return 'Could not confirm';
   if (confs.some((c) => c.includes('unverified'))) return 'Unverified estimate';
   if (confs.some((c) => c.includes('community'))) return 'Community reported';
   return 'From official docs';

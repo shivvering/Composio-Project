@@ -20,20 +20,20 @@
   {
     "guide": "Google",
     "guideSlug": "google",
-    "claim": "Apps requesting restricted Google scopes (e.g., Gmail full access: https://mail.google.com/) must undergo an annual CASA Tier 2 security assessment.",
-    "source": "https://appdefensealliance.org/casa",
-    "sourceTitle": "App Defense Alliance: CASA",
+    "claim": "Sensitive scopes: verification needs a justification for each scope, an Unlisted YouTube demo video with client ID visible in the address bar, and domain verification in Search Console by a project Owner or Editor. Google says it can take up to 10 days, and no security assessment is required. Restricted scopes (such as full Gmail access): all of that plus an annual security assessment by a Google approved assessor.",
+    "source": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+    "sourceTitle": "Google Identity: Scope Verification",
     "status": "verified correct",
-    "notes": "Confirmed against current Google Trust & Safety API Services User Data Policy for restricted scopes like Gmail full access (https://mail.google.com/)."
+    "notes": "Verified against official Google Identity documentation: sensitive scopes do not require security assessment; restricted scopes (such as full Gmail access) require annual reassessment at least every 12 months."
   },
   {
     "guide": "Google",
     "guideSlug": "google",
-    "claim": "Unverified apps can test with up to 100 pre-registered test users before verification is submitted.",
-    "source": "https://support.google.com/cloud/answer/9110914",
-    "sourceTitle": "Google Cloud Support: OAuth FAQ",
-    "status": "verified correct",
-    "notes": "Added test accounts in GCP Console OAuth Consent Screen; all successfully authorized without triggering CASA audit."
+    "claim": "Creating and verifying an OAuth app requires a GCP project with billing enabled and allows up to 100 test users before submission.",
+    "source": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification",
+    "sourceTitle": "Google Identity: Scope Verification",
+    "status": "could not verify",
+    "notes": "Could not confirm requirement for billing enabled or 100 test users limit in official production-readiness verification documentation."
   },
   {
     "guide": "Slack",

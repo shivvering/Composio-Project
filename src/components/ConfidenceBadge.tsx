@@ -18,7 +18,11 @@ export function ConfidenceBadge({
   let label = confidence;
   let Icon = HelpCircle;
 
-  if (norm.includes('official') || norm.includes('docs')) {
+  if (norm.includes('could not confirm') || norm.includes('could not verify')) {
+    badgeClass = 'badge-confidence unverified';
+    label = 'Could not confirm';
+    Icon = HelpCircle;
+  } else if (norm.includes('official') || norm.includes('docs')) {
     badgeClass = 'badge-confidence docs';
     label = 'From official docs';
     Icon = FileText;

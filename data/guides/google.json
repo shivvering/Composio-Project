@@ -1,180 +1,213 @@
 {
   "appName": "Google (Sensitive & Restricted Scopes)",
   "website": "https://console.cloud.google.com",
-  "lastChecked": "2026-10-31",
-  "manuallyChecked": true,
+  "lastChecked": "1 November 2026",
+  "manuallyChecked": false,
   "spotChecked": true,
-  "lastVerified": "2026-10-31",
+  "lastVerified": "1 November 2026",
   "difficulty": {
     "level": "hard",
-    "reason": "Requires Google Trust & Safety verification, an unlisted YouTube demo video showing the OAuth consent screen with client ID visible in the URL bar and how the app uses requested scopes, domain verification, and CASA Tier 2 security assessment.",
+    "reason": "Two distinct verification paths: Sensitive scopes require written justification for each scope, an Unlisted YouTube demo video showing client ID visible in the address bar, and Search Console domain verification (Google says it can take up to 10 days, and no security assessment is required). Restricted scopes (such as full Gmail access: https://mail.google.com/) require all of that plus an annual security assessment by a Google-approved assessor at least every 12 months (Google says can take several weeks; 2 to 6 weeks is an unverified estimate).",
     "confidence": "From official docs",
-    "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+    "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
   },
   "timeEstimate": {
     "setupTime": "2 - 4 hours",
     "setupTimeConfidence": "Community reported",
-    "approvalWait": "2 - 6 weeks",
-    "approvalWaitConfidence": "From official docs",
-    "approvalWaitSourceUrl": "https://support.google.com/cloud/answer/9110914",
-    "notes": "Unverified apps can test with up to 100 manually specified test users, but public launch requires Cloud Verification and external security audits."
+    "approvalWait": "Sensitive: up to 10 days; Restricted: several weeks (2 to 6 weeks)",
+    "approvalWaitConfidence": "Unverified estimate",
+    "approvalWaitSourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
+    "notes": "Sensitive scopes: verification takes up to 10 days (no security assessment required). Restricted scopes (such as full Gmail access: https://mail.google.com/): Google says verification can take several weeks, with 2 to 6 weeks being an unverified estimate depending on third-party assessor turnaround."
   },
   "requirements": [
     {
-      "text": "Google Cloud Platform (GCP) organization or project with billing enabled",
+      "text": "The homepage must be public and describe the app",
       "confidence": "From official docs",
-      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
-      "text": "Verified domain ownership in Google Search Console",
+      "text": "The privacy policy must be on the same domain as the homepage",
       "confidence": "From official docs",
-      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
-      "text": "Public Privacy Policy hosted on the verified domain detailing user data retention and deletion policies",
+      "text": "Each sensitive scope needs a written justification",
       "confidence": "From official docs",
-      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
-      "text": "Unlisted YouTube demo video showing the OAuth consent screen with client ID visible in the URL bar and demonstrating how the app uses requested scopes",
+      "text": "Domain verified in Search Console by a project Owner or Editor",
       "confidence": "From official docs",
-      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
-      "text": "Annual CASA (Cloud Application Security Assessment) Tier 2 audit for restricted scopes (e.g., Gmail full access: https://mail.google.com/)",
+      "text": "Unlisted YouTube demo video showing client ID visible in the address bar and demonstrating how the app uses requested scopes",
       "confidence": "From official docs",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+    },
+    {
+      "text": "Annual reassessment (at least every 12 months) by a Google approved assessor for restricted scopes (such as full Gmail access: https://mail.google.com/)",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
+    },
+    {
+      "text": "CASA Tier 2 security assessment for restricted scopes",
+      "confidence": "Community reported",
       "sourceUrl": "https://appdefensealliance.org/casa"
     },
     {
-      "text": "Payment of third-party security lab audit fees ($500 - $3,000+ depending on scope tier)",
+      "text": "$500 to $3,000 dollar fee paid to third-party security lab for restricted scope assessment",
       "confidence": "Community reported"
+    },
+    {
+      "text": "Google Cloud Platform (GCP) project with billing enabled",
+      "confidence": "Could not confirm"
+    },
+    {
+      "text": "Up to 100 test users allowed in OAuth consent screen testing mode before verification",
+      "confidence": "Could not confirm"
     }
   ],
   "steps": [
     {
       "stepNumber": 1,
       "title": "Create a GCP Project & Enable APIs",
-      "description": "Go to Google Cloud Console, create a new project, and enable the target APIs (such as Gmail API for Gmail full access) in the API Library.",
+      "description": "Go to Google Cloud Console, create a new project, and enable the target APIs (such as Gmail API for full Gmail access) in the API Library.",
       "actionUrl": "https://console.cloud.google.com/apis/dashboard",
       "confidence": "From official docs",
-      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
       "stepNumber": 2,
-      "title": "Configure OAuth Consent Screen",
-      "description": "Select User Type 'External'. Enter App Name, Support Email, Developer Email, and Authorized Domains (which must match your Google Search Console domain). Add requested sensitive or restricted scopes.",
+      "title": "Configure OAuth Consent Screen, Homepage & Privacy Policy",
+      "description": "Select User Type 'External'. Enter App Name, Support Email, and Developer Email. The homepage must be public and describe the app, and the privacy policy must be on the same domain as the homepage.",
       "actionUrl": "https://console.cloud.google.com/apis/credentials/consent",
       "confidence": "From official docs",
-      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
       "stepNumber": 3,
-      "title": "Create OAuth 2.0 Web Client Credentials",
-      "description": "Under 'Credentials', click 'Create Credentials' > 'OAuth client ID'. Select 'Web application' and specify your Authorized Redirect URIs.",
-      "actionUrl": "https://console.cloud.google.com/apis/credentials",
+      "title": "Domain Verification in Search Console by Owner or Editor",
+      "description": "Verify your domain ownership in Google Search Console. The domain must be verified by a user who is designated as an Owner or Editor on the Google Cloud project.",
+      "actionUrl": "https://search.google.com/search-console",
       "confidence": "From official docs",
-      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/web-server"
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
       "stepNumber": 4,
-      "title": "Test with Internal / Test Users",
-      "description": "Before public verification, add up to 100 Google user email addresses under 'Test users' in the Consent Screen settings. These users can log in despite the unverified state.",
-      "actionUrl": "https://console.cloud.google.com/apis/credentials/consent",
+      "title": "Record Unlisted YouTube Demo Video",
+      "description": "Record an Unlisted YouTube demo video showing: 1) the OAuth grant consent screen with client ID visible in the address bar, and 2) how your app uses requested scopes in user interface features.",
+      "actionUrl": "https://console.cloud.google.com/apis/credentials",
       "confidence": "From official docs",
-      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
       "stepNumber": 5,
-      "title": "Prepare Verification Materials & Demo Video",
-      "description": "Record an unlisted YouTube demo video showing: 1) the OAuth consent screen with client ID visible in the URL bar, and 2) how the app uses requested scopes. Verify domain ownership in Google Search Console.",
-      "actionUrl": "https://search.google.com/search-console",
+      "title": "Submit Sensitive Scopes: Written Justifications",
+      "description": "Case 1 (Sensitive Scopes): Submit for verification in GCP Console. Each sensitive scope needs a written justification explaining why non-sensitive scopes are inadequate. Google says it can take up to 10 days, and no security assessment is required.",
+      "actionUrl": "https://console.cloud.google.com/apis/credentials/consent",
       "confidence": "From official docs",
-      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
       "stepNumber": 6,
-      "title": "Submit for Verification & Complete CASA Review",
-      "description": "Click 'Submit for Verification' in the GCP Console. Coordinate with Google Trust & Safety and complete the CASA security assessment with an authorized lab.",
-      "actionUrl": "https://appdefensealliance.org/casa",
+      "title": "Submit Restricted Scopes: Annual Security Assessment",
+      "description": "Case 2 (Restricted Scopes, such as full Gmail access: https://mail.google.com/): Requires all sensitive scope items plus an annual security assessment by a Google approved assessor (at least every 12 months). Google says it can take several weeks (2 to 6 weeks is an unverified estimate; community reports CASA Tier 2 fees of $500 to $3,000).",
+      "actionUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification",
       "confidence": "From official docs",
-      "sourceUrl": "https://appdefensealliance.org/casa"
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
     }
   ],
   "blockers": [
     {
-      "problem": "Google Unverified App warning screen blocks users during authentication",
-      "solution": "During development, testers can click 'Advanced' > 'Go to [App] (unsafe)'. In production, this screen only disappears after Google Trust & Safety approves your app.",
+      "problem": "Verification rejected due to homepage or privacy policy domain mismatch",
+      "solution": "Ensure the homepage is public and describes the app, and the privacy policy must be on the same domain as the homepage. Domain must be verified in Search Console by a project Owner or Editor.",
       "confidence": "From official docs",
-      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
-      "problem": "Verification application rejected because demo video does not show client ID",
-      "solution": "Re-record the unlisted YouTube demo video ensuring the browser URL bar clearly shows the full `client_id` query parameter and demonstrates how the app uses requested scopes.",
-      "confidence": "Community reported"
+      "problem": "Demo video rejected because client ID is not visible in address bar or video is not Unlisted",
+      "solution": "Re-record an Unlisted YouTube demo video ensuring the browser address bar clearly shows the full `client_id` query parameter during the OAuth redirect, and demonstrating how the app uses requested scopes.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
-      "problem": "Domain ownership mismatch with GCP project",
-      "solution": "Ensure the domain registered in Google Search Console is verified by the exact same Google account that owns the GCP project.",
+      "problem": "Sensitive scope rejected for inadequate written justification",
+      "solution": "Each sensitive scope needs a written justification explaining user-facing necessity. Sensitive scopes do not require a security assessment (Google says review takes up to 10 days).",
       "confidence": "From official docs",
-      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
-      "problem": "CASA Tier 2 security assessment costs and lead times",
-      "solution": "Restricted scopes (e.g., Gmail full access: https://mail.google.com/) trigger mandatory third-party lab audits. Evaluate whether less sensitive scopes suffice or use a pre-verified managed provider.",
+      "problem": "Restricted scope security assessment costs ($500 to $3,000) and lead times (several weeks / 2 to 6 weeks)",
+      "solution": "Restricted scopes (such as full Gmail access: https://mail.google.com/) require all sensitive scope criteria plus an annual security assessment by a Google approved assessor at least every 12 months. Google says it can take several weeks (2 to 6 weeks unverified estimate; community reports CASA Tier 2 fees of $500 to $3,000). Sensitive scopes do not require a security assessment.",
       "confidence": "From official docs",
-      "sourceUrl": "https://appdefensealliance.org/casa"
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
     }
   ],
   "agentVsDeveloper": {
     "agentCanDo": [
       "Generate code for OAuth 2.0 PKCE flow, state parameter validation, and token refresh logic",
-      "Draft the scope justification narrative and privacy disclosure copy required by Google Trust & Safety",
+      "Draft written justifications for each sensitive scope and privacy disclosure copy",
       "Validate redirect URI formatting and client configuration"
     ],
     "developerMustDo": [
-      "Verify domain ownership in Google Search Console via DNS TXT records",
-      "Record and upload the unlisted YouTube demo video showing the OAuth consent screen with client ID visible in the URL bar and how the app uses requested scopes",
-      "Complete legal attestation forms with Google Trust & Safety",
-      "Engage an authorized CASA security lab and pay required auditing fees"
+      "Verify domain in Google Search Console as a GCP project Owner or Editor",
+      "Ensure homepage is public, describes the app, and hosts the privacy policy on the same domain",
+      "Record and upload the Unlisted YouTube demo video showing client ID visible in the address bar and scope usage",
+      "Undergo annual reassessment (at least every 12 months) by a Google approved assessor for restricted scopes (such as full Gmail access)"
     ]
   },
   "managedOption": {
-    "managedSufficientWhen": "Composio's pre-verified Google OAuth app is the fastest path when building AI assistants or agent tools that need restricted scopes (e.g., Gmail full access: https://mail.google.com/) without spending weeks and thousands of dollars on CASA security assessments. This tool was built for a Composio assignment, and Composio sells managed OAuth.",
+    "managedSufficientWhen": "Composio's pre-verified Google OAuth app is the fastest path when building AI assistants or agent tools that need restricted scopes (such as full Gmail access: https://mail.google.com/) without spending several weeks (2 to 6 weeks unverified estimate) and $500 to $3,000 on annual security assessments. This tool was built for a Composio assignment, and Composio sells managed OAuth.",
     "customRequiredWhen": "You must complete custom Google verification if your enterprise customers demand your specific brand name on the Google consent dialog, or if your enterprise security policy prohibits routing tokens through a third-party managed infrastructure."
   },
   "sources": [
     {
-      "title": "Google Cloud: OAuth App Verification FAQ",
-      "url": "https://support.google.com/cloud/answer/9110914"
+      "title": "Google Identity: Sensitive Scope Verification",
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+    },
+    {
+      "title": "Google Identity: Restricted Scope Verification",
+      "url": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
     },
     {
       "title": "App Defense Alliance: CASA Assessment",
       "url": "https://appdefensealliance.org/casa"
-    },
-    {
-      "title": "Google Identity: OAuth 2.0 for Web Server Applications",
-      "url": "https://developers.google.com/identity/protocols/oauth2/web-server"
     }
   ],
   "claims": [
     {
-      "claim": "Apps requesting restricted Google scopes (e.g., Gmail full access: https://mail.google.com/) must undergo an annual CASA Tier 2 security assessment.",
+      "claim": "Sensitive scopes: verification needs a justification for each scope, an Unlisted YouTube demo video with client ID visible in the address bar, and domain verification in Search Console by a project Owner or Editor. Google says it can take up to 10 days, and no security assessment is required.",
       "confidence": "From official docs",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
+    },
+    {
+      "claim": "Restricted scopes (such as full Gmail access: https://mail.google.com/): all sensitive scope requirements plus an annual security assessment by a Google approved assessor (at least every 12 months), which Google says can take several weeks.",
+      "confidence": "From official docs",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
+    },
+    {
+      "claim": "Google OAuth app approval and security assessment for restricted scopes takes 2 to 6 weeks.",
+      "confidence": "Unverified estimate",
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/restricted-scope-verification"
+    },
+    {
+      "claim": "Restricted scopes require a CASA Tier 2 security assessment with third-party assessor fees ranging from $500 to $3,000.",
+      "confidence": "Community reported",
       "sourceUrl": "https://appdefensealliance.org/casa"
     },
     {
-      "claim": "Unverified apps can test with up to 100 pre-registered test users before verification is submitted.",
+      "claim": "The privacy policy must be on the same domain as the homepage, and the homepage must be public and describe the app.",
       "confidence": "From official docs",
-      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+      "sourceUrl": "https://developers.google.com/identity/protocols/oauth2/production-readiness/sensitive-scope-verification"
     },
     {
-      "claim": "Google requires an unlisted YouTube demo video showing the OAuth consent screen with client ID visible in the URL bar and demonstrating how the app uses requested scopes.",
-      "confidence": "From official docs",
-      "sourceUrl": "https://support.google.com/cloud/answer/9110914"
+      "claim": "Creating and verifying an OAuth app requires a GCP project with billing enabled and allows up to 100 test users before submission.",
+      "confidence": "Could not confirm"
     }
   ],
   "openQuestions": [
-    "Does Google offer fee subsidies or waivers for early-stage bootstrapped AI agent startups undertaking CASA Tier 2 assessments?"
+    "Does Google offer fee subsidies or waivers for early-stage bootstrapped AI agent startups undertaking annual third-party restricted scope security assessments?"
   ],
   "slug": "google"
 }

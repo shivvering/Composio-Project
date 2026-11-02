@@ -3,7 +3,8 @@ export type DifficultyLevel = 'easy' | 'medium' | 'hard';
 export type ConfidenceLabel =
   | 'From official docs'
   | 'Community reported'
-  | 'Unverified estimate';
+  | 'Unverified estimate'
+  | 'Could not confirm';
 
 export type ClaimConfidence =
   | 'verified'
@@ -11,6 +12,7 @@ export type ClaimConfidence =
   | 'from official docs'
   | 'Community reported'
   | 'Unverified estimate'
+  | 'Could not confirm'
   | 'unverified';
 
 export interface ConfidenceMetadata {
