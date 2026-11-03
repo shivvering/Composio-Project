@@ -5,6 +5,8 @@ A guide library with a live research agent. A developer searches an app and gets
 Live site: https://composio-project-mauve.vercel.app/
 Repo: https://github.com/shivvering/Composio-Project
 
+Note for reviewers: I use the free Gemini plan, which has a small daily limit that resets at midnight Pacific Time. When the limit is reached, the app still writes a guide but without Google Search, and the page says it was generated without web search and is unverified. That is because of the free plan limit, not a bug. Trying again after the reset gives a guide with real sources.
+
 ## What OAuth is, in my words
 OAuth lets one app use your data in another app without ever seeing your password. When a developer builds an AI agent, their users want to connect apps like Google or Slack. To allow that, the developer often has to create an "OAuth app" with the provider and sometimes get it approved. That setup is confusing and can take an hour or several weeks.
 
@@ -17,7 +19,8 @@ I come from a non programming background. I spent the first day learning what OA
 ## How to run it
 1. Run npm install.
 2. Copy .env.example to .env.local and add your GEMINI_API_KEY.
-3. Run npm run dev.
+3. Run npm run dev, then open http://localhost:3000.
+
 Credentials are not in the repo.
 
 ## How it works
@@ -33,19 +36,15 @@ If Google Search is not available (for example the free quota ran out), the agen
 
 ```mermaid
 flowchart TD
-    A[Developer searches app or website] --> B{Guide already in library?}
-    B -- Yes --> C[Display existing guide instantly]
-    B -- No --> D[Live Agent triggers Gemini API]
-    D --> E{Google Search available?}
-    E -- Yes --> F[Ground response with real Google Search results]
-    E -- No (429 quota) --> G[Fallback: Draft guide without search & mark unverified]
-    F --> H[Schema & Validation Check]
-    G --> H
-    H -- Missing fields --> I[Retry once with error feedback]
-    I --> H
-    H -- Valid structure --> J[Automated Link Checker]
-    J --> K[Remove dead links or 404s]
-    K --> L[Render final guide with confidence labels and AI banner]
+A[Developer searches an app name or website] --> B[Gemini searches Google and reads real pages]
+B --> C[Gemini fills a fixed guide template with labels]
+C --> D{Does the guide pass the format check?}
+D -- No, retry once --> C
+D -- Yes --> E[Code checks every source link and removes dead ones]
+E --> F[Guide is shown with an AI generated banner]
+B -. Search unavailable or quota used up .-> G[Write the guide without search]
+G --> H[Mark the whole guide as unverified]
+H --> F
 ```
 
 ## What an agent can do and what you must do
@@ -60,7 +59,7 @@ The agent reads documentation and writes the guide. It cannot create your app, a
 
 ## What I tested and what I only read
 - Tested myself: I created a Google OAuth app in testing mode and set up basic scopes (31 October).
-- Live generation: I searched Asana, a nonsense name, a calculator app, and a website address. The nonsense name said no documentation exists. The calculator app said it does not need OAuth registration. The website address gave the same Asana guide. My free Gemini quota ran out during testing, so the Asana guide was written without search and marked unverified, which is how the fallback is designed to work. [Add after tomorrow's retest: Once the quota reset, Asana gave a guide with real source links.]
+- Live generation: I searched Asana, a nonsense name, a calculator app, and a website address. The nonsense name said no documentation exists. The calculator app said it does not need OAuth registration. The website address gave the same Asana guide. My free Gemini quota ran out during testing, so the Asana guide was written without search and marked unverified, which is how the fallback is designed to work.
 - Shared links and phone: I opened a guide link in a private window and it loaded. The site looks fine on my phone.
 - Source links: I clicked every link in the Notion, Slack and GitHub guides (14 unique links in total) and found 0 dead links.
 - Everything else I only read in the official documentation. The Verification Log says which is which.

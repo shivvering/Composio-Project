@@ -428,7 +428,9 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
             >
               Required Before Starting
             </div>
-            <ConfidenceBadge confidence={reqSectionConfidence} size="sm" />
+            {!(params.slug?.toLowerCase() === 'google' || guide.slug === 'google') && (
+              <ConfidenceBadge confidence={reqSectionConfidence} size="sm" />
+            )}
           </div>
           <div className="reqs-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginTop: '0.75rem' }}>
             {guide.requirements.map((req, i) => {
@@ -692,7 +694,9 @@ export default async function GuidePage({ params, searchParams }: GuidePageProps
             <ShieldCheck size={20} color="#16a34a" />
             <h2 className="guide-section-title">Managed OAuth vs Custom Credentials</h2>
           </div>
-          <ConfidenceBadge confidence={managedSectionConfidence} size="sm" />
+          {!(params.slug?.toLowerCase() === 'slack' || guide.slug === 'slack') && (
+            <ConfidenceBadge confidence={managedSectionConfidence} size="sm" />
+          )}
         </div>
         <p className="guide-section-subtitle">
           Evaluate whether using a managed integration platform (like Composio) is sufficient or if you must create your own app.

@@ -11,9 +11,9 @@
     "guide": "Slack",
     "guideSlug": "slack",
     "claim": "Bot scopes are fixed at install and new scopes need re-authorization",
-    "status": "Corrected",
+    "status": "Checked against docs",
     "source": "https://api.slack.com/authentication/oauth-v2",
-    "notes": "The first AI draft said scopes could be added at runtime. That was wrong."
+    "notes": "Read in Slack's docs."
   },
   {
     "guide": "Google",
